@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ele.dao.hackathon.RstInfoMapper">
+    <resultMap id="BaseResultMap" type="com.ele.model.hackathon.RstInfo">
+        <id column="restaurant_id" property="restaurantId" jdbcType="CHAR"/>
+        <result column="primary_category" property="primaryCategory" jdbcType="VARCHAR"/>
+        <result column="food_name_list" property="foodNameList" jdbcType="VARCHAR"/>
+        <result column="category_list" property="categoryList" jdbcType="VARCHAR"/>
+        <result column="x" property="x" jdbcType="DECIMAL"/>
+        <result column="y" property="y" jdbcType="DECIMAL"/>
+        <result column="agent_fee" property="agentFee" jdbcType="INTEGER"/>
+        <result column="is_premium" property="isPremium" jdbcType="TINYINT"/>
+        <result column="address_type" property="addressType" jdbcType="VARCHAR"/>
+        <result column="good_rating_rate" property="goodRatingRate" jdbcType="DOUBLE"/>
+        <result column="open_month_num" property="openMonthNum" jdbcType="INTEGER"/>
+        <result column="has_image" property="hasImage" jdbcType="TINYINT"/>
+        <result column="has_food_img" property="hasFoodImg" jdbcType="TINYINT"/>
+        <result column="min_deliver_amount" property="minDeliverAmount" jdbcType="INTEGER"/>
+        <result column="time_ensure_spent" property="timeEnsureSpent" jdbcType="INTEGER"/>
+        <result column="is_time_ensure" property="isTimeEnsure" jdbcType="TINYINT"/>
+        <result column="is_ka" property="isKa" jdbcType="TINYINT"/>
+        <result column="is_time_ensure_discount" property="isTimeEnsureDiscount" jdbcType="TINYINT"/>
+        <result column="is_eleme_deliver" property="isElemeDeliver" jdbcType="TINYINT"/>
+        <result column="radius" property="radius" jdbcType="DOUBLE"/>
+        <result column="bu_flag" property="buFlag" jdbcType="VARCHAR"/>
+        <result column="brand_name" property="brandName" jdbcType="VARCHAR"/>
+        <result column="service_rating" property="serviceRating" jdbcType="DOUBLE"/>
+        <result column="invoice" property="invoice" jdbcType="TINYINT"/>
+        <result column="online_payment" property="onlinePayment" jdbcType="TINYINT"/>
+        <result column="public_degree" property="publicDegree" jdbcType="TINYINT"/>
+        <result column="food_num" property="foodNum" jdbcType="INTEGER"/>
+        <result column="food_image_num" property="foodImageNum" jdbcType="INTEGER"/>
+        <result column="is_promotion_info" property="isPromotionInfo" jdbcType="TINYINT"/>
+        <result column="is_bookable" property="isBookable" jdbcType="TINYINT"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        restaurant_id, primary_category, food_name_list, category_list, x, y, agent_fee,
+        is_premium, address_type, good_rating_rate, open_month_num, has_image, has_food_img,
+        min_deliver_amount, time_ensure_spent, is_time_ensure, is_ka, is_time_ensure_discount,
+        is_eleme_deliver, radius, bu_flag, brand_name, service_rating, invoice, online_payment,
+        public_degree, food_num, food_image_num, is_promotion_info, is_bookable
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from rst_info
+        where restaurant_id = #{restaurantId,jdbcType=CHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from rst_info
+        where restaurant_id = #{restaurantId,jdbcType=CHAR}
+    </delete>
+    <insert id="insert" parameterType="com.ele.model.hackathon.RstInfo">
+    insert into rst_info (restaurant_id, primary_category, food_name_list, 
+      category_list, x, y, 
+      agent_fee, is_premium, address_type, 
+      good_rating_rate, open_month_num, has_image, 
+      has_food_img, min_deliver_amount, time_ensure_spent, 
+      is_time_ensure, is_ka, is_time_ensure_discount, 
+      is_eleme_deliver, radius, bu_flag, 
+      brand_name, service_rating, invoice, 
+      online_payment, public_degree, food_num, 
+      food_image_num, is_promotion_info, is_bookable
+      )
+    values (#{restaurantId,jdbcType=CHAR}, #{primaryCategory,jdbcType=VARCHAR}, #{foodNameList,jdbcType=VARCHAR}, 
+      #{categoryList,jdbcType=VARCHAR}, #{x,jdbcType=DECIMAL}, #{y,jdbcType=DECIMAL}, 
+      #{agentFee,jdbcType=INTEGER}, #{isPremium,jdbcType=TINYINT}, #{addressType,jdbcType=VARCHAR}, 
+      #{goodRatingRate,jdbcType=DOUBLE}, #{openMonthNum,jdbcType=INTEGER}, #{hasImage,jdbcType=TINYINT}, 
+      #{hasFoodImg,jdbcType=TINYINT}, #{minDeliverAmount,jdbcType=INTEGER}, #{timeEnsureSpent,jdbcType=INTEGER}, 
+      #{isTimeEnsure,jdbcType=TINYINT}, #{isKa,jdbcType=TINYINT}, #{isTimeEnsureDiscount,jdbcType=TINYINT}, 
+      #{isElemeDeliver,jdbcType=TINYINT}, #{radius,jdbcType=DOUBLE}, #{buFlag,jdbcType=VARCHAR}, 
+      #{brandName,jdbcType=VARCHAR}, #{serviceRating,jdbcType=DOUBLE}, #{invoice,jdbcType=TINYINT}, 
+      #{onlinePayment,jdbcType=TINYINT}, #{publicDegree,jdbcType=TINYINT}, #{foodNum,jdbcType=INTEGER}, 
+      #{foodImageNum,jdbcType=INTEGER}, #{isPromotionInfo,jdbcType=TINYINT}, #{isBookable,jdbcType=TINYINT}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.ele.model.hackathon.RstInfo">
+        insert into rst_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="restaurantId != null">
+                restaurant_id,
+            </if>
+            <if test="primaryCategory != null">
+                primary_category,
+            </if>
+            <if test="foodNameList != null">
+                food_name_list,
+            </if>
+            <if test="categoryList != null">
+                category_list,
+            </if>
+            <if test="x != null">
+                x,
+            </if>
+            <if test="y != null">
+                y,
+            </if>
+            <if test="agentFee != null">
+                agent_fee,
+            </if>
+            <if test="isPremium != null">
+                is_premium,
+            </if>
+            <if test="addressType != null">
+                address_type,
+            </if>
+            <if test="goodRatingRate != null">
+                good_rating_rate,
+            </if>
+            <if test="openMonthNum != null">
+                open_month_num,
+            </if>
+            <if test="hasImage != null">
+                has_image,
+            </if>
+            <if test="hasFoodImg != null">
+                has_food_img,
+            </if>
+            <if test="minDeliverAmount != null">
+                min_deliver_amount,
+            </if>
+            <if test="timeEnsureSpent != null">
+                time_ensure_spent,
+            </if>
+            <if test="isTimeEnsure != null">
+                is_time_ensure,
+            </if>
+            <if test="isKa != null">
+                is_ka,
+            </if>
+            <if test="isTimeEnsureDiscount != null">
+                is_time_ensure_discount,
+            </if>
+            <if test="isElemeDeliver != null">
+                is_eleme_deliver,
+            </if>
+            <if test="radius != null">
+                radius,
+            </if>
+            <if test="buFlag != null">
+                bu_flag,
+            </if>
+            <if test="brandName != null">
+                brand_name,
+            </if>
+            <if test="serviceRating != null">
+                service_rating,
+            </if>
+            <if test="invoice != null">
+                invoice,
+            </if>
+            <if test="onlinePayment != null">
+                online_payment,
+            </if>
+            <if test="publicDegree != null">
+                public_degree,
+            </if>
+            <if test="foodNum != null">
+                food_num,
+            </if>
+            <if test="foodImageNum != null">
+                food_image_num,
+            </if>
+            <if test="isPromotionInfo != null">
+                is_promotion_info,
+            </if>
+            <if test="isBookable != null">
+                is_bookable,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="restaurantId != null">
+                #{restaurantId,jdbcType=CHAR},
+            </if>
+            <if test="primaryCategory != null">
+                #{primaryCategory,jdbcType=VARCHAR},
+            </if>
+            <if test="foodNameList != null">
+                #{foodNameList,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryList != null">
+                #{categoryList,jdbcType=VARCHAR},
+            </if>
+            <if test="x != null">
+                #{x,jdbcType=DECIMAL},
+            </if>
+            <if test="y != null">
+                #{y,jdbcType=DECIMAL},
+            </if>
+            <if test="agentFee != null">
+                #{agentFee,jdbcType=INTEGER},
+            </if>
+            <if test="isPremium != null">
+                #{isPremium,jdbcType=TINYINT},
+            </if>
+            <if test="addressType != null">
+                #{addressType,jdbcType=VARCHAR},
+            </if>
+            <if test="goodRatingRate != null">
+                #{goodRatingRate,jdbcType=DOUBLE},
+            </if>
+            <if test="openMonthNum != null">
+                #{openMonthNum,jdbcType=INTEGER},
+            </if>
+            <if test="hasImage != null">
+                #{hasImage,jdbcType=TINYINT},
+            </if>
+            <if test="hasFoodImg != null">
+                #{hasFoodImg,jdbcType=TINYINT},
+            </if>
+            <if test="minDeliverAmount != null">
+                #{minDeliverAmount,jdbcType=INTEGER},
+            </if>
+            <if test="timeEnsureSpent != null">
+                #{timeEnsureSpent,jdbcType=INTEGER},
+            </if>
+            <if test="isTimeEnsure != null">
+                #{isTimeEnsure,jdbcType=TINYINT},
+            </if>
+            <if test="isKa != null">
+                #{isKa,jdbcType=TINYINT},
+            </if>
+            <if test="isTimeEnsureDiscount != null">
+                #{isTimeEnsureDiscount,jdbcType=TINYINT},
+            </if>
+            <if test="isElemeDeliver != null">
+                #{isElemeDeliver,jdbcType=TINYINT},
+            </if>
+            <if test="radius != null">
+                #{radius,jdbcType=DOUBLE},
+            </if>
+            <if test="buFlag != null">
+                #{buFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="brandName != null">
+                #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="serviceRating != null">
+                #{serviceRating,jdbcType=DOUBLE},
+            </if>
+            <if test="invoice != null">
+                #{invoice,jdbcType=TINYINT},
+            </if>
+            <if test="onlinePayment != null">
+                #{onlinePayment,jdbcType=TINYINT},
+            </if>
+            <if test="publicDegree != null">
+                #{publicDegree,jdbcType=TINYINT},
+            </if>
+            <if test="foodNum != null">
+                #{foodNum,jdbcType=INTEGER},
+            </if>
+            <if test="foodImageNum != null">
+                #{foodImageNum,jdbcType=INTEGER},
+            </if>
+            <if test="isPromotionInfo != null">
+                #{isPromotionInfo,jdbcType=TINYINT},
+            </if>
+            <if test="isBookable != null">
+                #{isBookable,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ele.model.hackathon.RstInfo">
+        update rst_info
+        <set>
+            <if test="primaryCategory != null">
+                primary_category = #{primaryCategory,jdbcType=VARCHAR},
+            </if>
+            <if test="foodNameList != null">
+                food_name_list = #{foodNameList,jdbcType=VARCHAR},
+            </if>
+            <if test="categoryList != null">
+                category_list = #{categoryList,jdbcType=VARCHAR},
+            </if>
+            <if test="x != null">
+                x = #{x,jdbcType=DECIMAL},
+            </if>
+            <if test="y != null">
+                y = #{y,jdbcType=DECIMAL},
+            </if>
+            <if test="agentFee != null">
+                agent_fee = #{agentFee,jdbcType=INTEGER},
+            </if>
+            <if test="isPremium != null">
+                is_premium = #{isPremium,jdbcType=TINYINT},
+            </if>
+            <if test="addressType != null">
+                address_type = #{addressType,jdbcType=VARCHAR},
+            </if>
+            <if test="goodRatingRate != null">
+                good_rating_rate = #{goodRatingRate,jdbcType=DOUBLE},
+            </if>
+            <if test="openMonthNum != null">
+                open_month_num = #{openMonthNum,jdbcType=INTEGER},
+            </if>
+            <if test="hasImage != null">
+                has_image = #{hasImage,jdbcType=TINYINT},
+            </if>
+            <if test="hasFoodImg != null">
+                has_food_img = #{hasFoodImg,jdbcType=TINYINT},
+            </if>
+            <if test="minDeliverAmount != null">
+                min_deliver_amount = #{minDeliverAmount,jdbcType=INTEGER},
+            </if>
+            <if test="timeEnsureSpent != null">
+                time_ensure_spent = #{timeEnsureSpent,jdbcType=INTEGER},
+            </if>
+            <if test="isTimeEnsure != null">
+                is_time_ensure = #{isTimeEnsure,jdbcType=TINYINT},
+            </if>
+            <if test="isKa != null">
+                is_ka = #{isKa,jdbcType=TINYINT},
+            </if>
+            <if test="isTimeEnsureDiscount != null">
+                is_time_ensure_discount = #{isTimeEnsureDiscount,jdbcType=TINYINT},
+            </if>
+            <if test="isElemeDeliver != null">
+                is_eleme_deliver = #{isElemeDeliver,jdbcType=TINYINT},
+            </if>
+            <if test="radius != null">
+                radius = #{radius,jdbcType=DOUBLE},
+            </if>
+            <if test="buFlag != null">
+                bu_flag = #{buFlag,jdbcType=VARCHAR},
+            </if>
+            <if test="brandName != null">
+                brand_name = #{brandName,jdbcType=VARCHAR},
+            </if>
+            <if test="serviceRating != null">
+                service_rating = #{serviceRating,jdbcType=DOUBLE},
+            </if>
+            <if test="invoice != null">
+                invoice = #{invoice,jdbcType=TINYINT},
+            </if>
+            <if test="onlinePayment != null">
+                online_payment = #{onlinePayment,jdbcType=TINYINT},
+            </if>
+            <if test="publicDegree != null">
+                public_degree = #{publicDegree,jdbcType=TINYINT},
+            </if>
+            <if test="foodNum != null">
+                food_num = #{foodNum,jdbcType=INTEGER},
+            </if>
+            <if test="foodImageNum != null">
+                food_image_num = #{foodImageNum,jdbcType=INTEGER},
+            </if>
+            <if test="isPromotionInfo != null">
+                is_promotion_info = #{isPromotionInfo,jdbcType=TINYINT},
+            </if>
+            <if test="isBookable != null">
+                is_bookable = #{isBookable,jdbcType=TINYINT},
+            </if>
+        </set>
+        where restaurant_id = #{restaurantId,jdbcType=CHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ele.model.hackathon.RstInfo">
+        update rst_info
+        set primary_category = #{primaryCategory,jdbcType=VARCHAR},
+        food_name_list = #{foodNameList,jdbcType=VARCHAR},
+        category_list = #{categoryList,jdbcType=VARCHAR},
+        x = #{x,jdbcType=DECIMAL},
+        y = #{y,jdbcType=DECIMAL},
+        agent_fee = #{agentFee,jdbcType=INTEGER},
+        is_premium = #{isPremium,jdbcType=TINYINT},
+        address_type = #{addressType,jdbcType=VARCHAR},
+        good_rating_rate = #{goodRatingRate,jdbcType=DOUBLE},
+        open_month_num = #{openMonthNum,jdbcType=INTEGER},
+        has_image = #{hasImage,jdbcType=TINYINT},
+        has_food_img = #{hasFoodImg,jdbcType=TINYINT},
+        min_deliver_amount = #{minDeliverAmount,jdbcType=INTEGER},
+        time_ensure_spent = #{timeEnsureSpent,jdbcType=INTEGER},
+        is_time_ensure = #{isTimeEnsure,jdbcType=TINYINT},
+        is_ka = #{isKa,jdbcType=TINYINT},
+        is_time_ensure_discount = #{isTimeEnsureDiscount,jdbcType=TINYINT},
+        is_eleme_deliver = #{isElemeDeliver,jdbcType=TINYINT},
+        radius = #{radius,jdbcType=DOUBLE},
+        bu_flag = #{buFlag,jdbcType=VARCHAR},
+        brand_name = #{brandName,jdbcType=VARCHAR},
+        service_rating = #{serviceRating,jdbcType=DOUBLE},
+        invoice = #{invoice,jdbcType=TINYINT},
+        online_payment = #{onlinePayment,jdbcType=TINYINT},
+        public_degree = #{publicDegree,jdbcType=TINYINT},
+        food_num = #{foodNum,jdbcType=INTEGER},
+        food_image_num = #{foodImageNum,jdbcType=INTEGER},
+        is_promotion_info = #{isPromotionInfo,jdbcType=TINYINT},
+        is_bookable = #{isBookable,jdbcType=TINYINT}
+        where restaurant_id = #{restaurantId,jdbcType=CHAR}
+    </update>
+    <!-- 批量插入数据-->
+    <!--<insert id="batchInsertVoucher" parameterType="list">-->
+    <!--insert into his_eco_env(<include refid="Base_Column_List"/>) values-->
+    <!--<foreach collection="list" item="item" separator=",">-->
+    <!--(-->
+    <!--<include refid="batchColValues"/>-->
+    <!--)-->
+    <!--</foreach>-->
+    <!--</insert>-->
+</mapper>

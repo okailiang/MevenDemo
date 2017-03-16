@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--                 命名空间用于查找 -->
+<mapper namespace="com.ele.dao.VoucherDao">
+
+    <!-- 替代，语句中的内容,简写 -->
+    <sql id="cols">
+      id,voucher_no,amount,active_id,batch_no,consumer_type,active_name,
+      active_type,status,voucher_begin_time,voucher_end_time,active_start_time,
+      active_end_time,active_image_url,active_rule,full,type,use_times,version,
+      create_time,last_modified,modified_by,business_type,phone_num,city_id,strategy_count
+    </sql>
+    <!-- 替代，语句中的内容,简写 -->
+    <sql id="noIdCols">
+        voucher_no,amount,active_id,batch_no,consumer_type,active_name,
+        active_type,status,voucher_begin_time,voucher_end_time,active_start_time,
+        active_end_time,active_image_url,active_rule,full,type,use_times,version,
+        create_time,last_modified,modified_by,business_type,phone_num,city_id,strategy_count
+    </sql>
+    <sql id="batchColValues">
+        #{item.voucherNo,jdbcType=VARCHAR},
+        #{item.amount,jdbcType=DECIMAL},
+        #{item.activeId,jdbcType=BIGINT},
+        #{item.batchNo,jdbcType=VARCHAR},
+        #{item.consumerType,jdbcType=INTEGER},
+        #{item.activeName,jdbcType=VARCHAR},
+        #{item.activeType,jdbcType=INTEGER},
+        #{item.status,jdbcType=INTEGER},
+        #{item.voucherBeginTime,jdbcType=DATE},
+        #{item.voucherEndTime,jdbcType=DATE},
+        #{item.activeStartTime,jdbcType=DATE},
+        #{item.activeEndTime,jdbcType=DATE},
+        #{item.activeImageUrl,jdbcType=VARCHAR},
+        #{item.activeRule,jdbcType=VARCHAR},
+        #{item.full,jdbcType=BIGINT},
+        #{item.type,jdbcType=INTEGER},
+        #{item.useTimes,jdbcType=INTEGER},
+        #{item.version,jdbcType=INTEGER},
+        #{item.createTime,jdbcType=DATE},
+        #{item.lastModified,jdbcType=DATE},
+        #{item.modifiedBy,jdbcType=VARCHAR},
+        #{item.businessType,jdbcType=INTEGER},
+        #{item.phoneNum,jdbcType=VARCHAR},
+        #{item.cityId,jdbcType=BIGINT},
+        #{item.strategyCount,jdbcType=INTEGER}
+    </sql>
+    <sql id="colValues">
+        #{voucherNo,jdbcType=VARCHAR},
+        #{amount,jdbcType=DECIMAL},
+        #{activeId,jdbcType=BIGINT},
+        #{batchNo,jdbcType=VARCHAR},
+        #{consumerType,jdbcType=INTEGER},
+        #{activeName,jdbcType=VARCHAR},
+        #{activeType,jdbcType=INTEGER},
+        #{status,jdbcType=INTEGER},
+        #{voucherBeginTime,jdbcType=DATE},
+        #{voucherEndTime,jdbcType=DATE},
+        #{activeStartTime,jdbcType=DATE},
+        #{activeEndTime,jdbcType=DATE},
+        #{activeImageUrl,jdbcType=VARCHAR},
+        #{activeRule,jdbcType=VARCHAR},
+        #{full,jdbcType=BIGINT},
+        #{type,jdbcType=INTEGER},
+        #{useTimes,jdbcType=INTEGER},
+        #{version,jdbcType=INTEGER},
+        #{createTime,jdbcType=DATE},
+        #{lastModified,jdbcType=DATE},
+        #{modifiedBy,jdbcType=VARCHAR},
+        #{businessType,jdbcType=INTEGER},
+        #{phoneNum,jdbcType=VARCHAR},
+        #{cityId,jdbcType=BIGINT},
+        #{strategyCount,jdbcType=INTEGER}
+    </sql>
+    <!-- Voucher的ResultMap类型-->
+    <resultMap id="voucherResultMap" type="Voucher">
+        <id column="id" property="id" jdbcType="BIGINT" javaType="long"/>
+        <result column="voucher_no" property="voucherNo" jdbcType="VARCHAR" javaType="string"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL" javaType="decimal"/>
+        <result column="active_id" property="activeId" jdbcType="BIGINT" javaType="long"/>
+        <result column="batch_no" property="batchNo" jdbcType="VARCHAR" javaType="string"/>
+        <result column="consumer_type" property="consumerType" jdbcType="INTEGER" javaType="int"/>
+        <result column="active_name" property="activeName" jdbcType="VARCHAR" javaType="string"/>
+        <result column="active_type" property="activeType" jdbcType="INTEGER" javaType="int"/>
+        <result column="status" property="status" jdbcType="INTEGER" javaType="int"/>
+        <result column="voucher_begin_time" property="voucherBeginTime" jdbcType="DATE" javaType="date"/>
+        <result column="voucher_end_time" property="voucherEndTime" jdbcType="DATE" javaType="date"/>
+        <result column="active_start_time" property="activeStartTime" jdbcType="DATE" javaType="date"/>
+        <result column="active_end_time" property="activeEndTime" jdbcType="DATE" javaType="date"/>
+        <result column="active_image_url" property="activeImageUrl" jdbcType="VARCHAR" javaType="string"/>
+        <result column="active_rule" property="activeRule" jdbcType="VARCHAR" javaType="string"/>
+        <result column="full" property="full" jdbcType="BIGINT" javaType="long"/>
+        <result column="type" property="type" jdbcType="INTEGER" javaType="int"/>
+        <result column="use_times" property="useTimes" jdbcType="INTEGER" javaType="int"/>
+        <result column="version" property="version" jdbcType="INTEGER" javaType="int"/>
+        <result column="create_time" property="createTime" jdbcType="DATE" javaType="date"/>
+        <result column="last_modified" property="lastModified" jdbcType="DATE" javaType="date"/>
+        <result column="modified_by" property="modifiedBy" jdbcType="VARCHAR" javaType="string"/>
+        <result column="business_type" property="businessType" jdbcType="INTEGER" javaType="int"/>
+        <result column="phone_num" property="phoneNum" jdbcType="VARCHAR" javaType="string"/>
+        <result column="city_id" property="cityId" jdbcType="BIGINT" javaType="long"/>
+        <result column="strategy_count" property="strategyCount" jdbcType="INTEGER" javaType="int"/>
+    </resultMap>
+
+    <!-- 查询一个 -->                            <!--  别名替代，简写-->
+    <select id="findVoucherById" parameterType="long" resultMap="voucherResultMap">
+        select
+        <include refid="cols"/>
+        from t_voucher where id= #{id}
+    </select>
+    <!-- 查询前三条数据-->
+    <select id="getTopThreeVoucher" resultMap="voucherResultMap">
+        select
+        <include refid="cols"/>
+        from t_voucher order by id desc limit 0,3
+    </select>
+    <!-- 插入一条数据-->
+    <insert id="insertVoucher" parameterType="Voucher">
+        <!--自动产生id-->
+        <selectKey keyProperty="id" order="AFTER" resultType="long">
+            select LAST_INSERT_ID();
+        </selectKey>
+        insert into t_voucher(<include refid="noIdCols"/>) values(
+        <include refid="colValues"/>
+        )
+    </insert>
+    <!-- 批量插入数据-->
+    <insert id="batchInsertVoucher" parameterType="list">
+        insert into t_voucher(<include refid="noIdCols"/>) values
+        <foreach collection="list" item="item" separator=",">
+            (
+            <include refid="batchColValues"/>
+            )
+        </foreach>
+    </insert>
+    <!-- 更新一条数据-->
+    <update id="updateVoucher" parameterType="Voucher">
+        update t_voucher
+        <set>
+            <if test="active!=null">active_name=#{activeName}</if>
+        </set>
+        where id = #{id}
+    </update>
+    <!-- 批量更新数据-->
+    <update id="batchUpdateVoucher" parameterType="list">
+        <foreach collection="list" item="item" separator=";">
+            update t_voucher
+            <set>
+                active_name=#{item.activeName}
+            </set>
+            where id=#{item.id}
+        </foreach>
+    </update>
+    <!-- 删除一条数据-->
+    <delete id="deleteVoucher" parameterType="Voucher">
+        delete from t_voucher where id = #{id}
+    </delete>
+    <!-- 批量删除数据-->
+    <delete id="batchDeleteVoucher" parameterType="list">
+        delete from t_voucher where id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ele.dao.hackathon.NextEcoEnvMapper">
+    <resultMap id="BaseResultMap" type="com.ele.model.hackathon.NextEcoEnv">
+        <id column="list_id" property="listId" jdbcType="CHAR"/>
+        <result column="is_select" property="isSelect" jdbcType="TINYINT"/>
+        <result column="day_no" property="dayNo" jdbcType="INTEGER"/>
+        <result column="minutes" property="minutes" jdbcType="INTEGER"/>
+        <result column="eleme_device_id" property="elemeDeviceId" jdbcType="CHAR"/>
+        <result column="is_new" property="isNew" jdbcType="TINYINT"/>
+        <result column="x" property="x" jdbcType="DECIMAL"/>
+        <result column="y" property="y" jdbcType="DECIMAL"/>
+        <result column="user_id" property="userId" jdbcType="CHAR"/>
+        <result column="network_type" property="networkType" jdbcType="VARCHAR"/>
+        <result column="platform" property="platform" jdbcType="VARCHAR"/>
+        <result column="brand" property="brand" jdbcType="VARCHAR"/>
+        <result column="model" property="model" jdbcType="VARCHAR"/>
+        <result column="network_operator" property="networkOperator" jdbcType="VARCHAR"/>
+        <result column="resolution" property="resolution" jdbcType="VARCHAR"/>
+        <result column="channel" property="channel" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        list_id, is_select, day_no, minutes, eleme_device_id, is_new, x, y, user_id, network_type,
+        platform, brand, model, network_operator, resolution, channel
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from next_eco_env
+        where list_id = #{listId,jdbcType=CHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from next_eco_env
+        where list_id = #{listId,jdbcType=CHAR}
+    </delete>
+    <insert id="insert" parameterType="com.ele.model.hackathon.NextEcoEnv">
+    insert into next_eco_env (list_id, is_select, day_no, 
+      minutes, eleme_device_id, is_new, 
+      x, y, user_id, network_type, 
+      platform, brand, model, 
+      network_operator, resolution, channel
+      )
+    values (#{listId,jdbcType=CHAR}, #{isSelect,jdbcType=TINYINT}, #{dayNo,jdbcType=INTEGER}, 
+      #{minutes,jdbcType=INTEGER}, #{elemeDeviceId,jdbcType=CHAR}, #{isNew,jdbcType=TINYINT}, 
+      #{x,jdbcType=DECIMAL}, #{y,jdbcType=DECIMAL}, #{userId,jdbcType=CHAR}, #{networkType,jdbcType=VARCHAR}, 
+      #{platform,jdbcType=VARCHAR}, #{brand,jdbcType=VARCHAR}, #{model,jdbcType=VARCHAR}, 
+      #{networkOperator,jdbcType=VARCHAR}, #{resolution,jdbcType=VARCHAR}, #{channel,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.ele.model.hackathon.NextEcoEnv">
+        insert into next_eco_env
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="listId != null">
+                list_id,
+            </if>
+            <if test="isSelect != null">
+                is_select,
+            </if>
+            <if test="dayNo != null">
+                day_no,
+            </if>
+            <if test="minutes != null">
+                minutes,
+            </if>
+            <if test="elemeDeviceId != null">
+                eleme_device_id,
+            </if>
+            <if test="isNew != null">
+                is_new,
+            </if>
+            <if test="x != null">
+                x,
+            </if>
+            <if test="y != null">
+                y,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="networkType != null">
+                network_type,
+            </if>
+            <if test="platform != null">
+                platform,
+            </if>
+            <if test="brand != null">
+                brand,
+            </if>
+            <if test="model != null">
+                model,
+            </if>
+            <if test="networkOperator != null">
+                network_operator,
+            </if>
+            <if test="resolution != null">
+                resolution,
+            </if>
+            <if test="channel != null">
+                channel,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="listId != null">
+                #{listId,jdbcType=CHAR},
+            </if>
+            <if test="isSelect != null">
+                #{isSelect,jdbcType=TINYINT},
+            </if>
+            <if test="dayNo != null">
+                #{dayNo,jdbcType=INTEGER},
+            </if>
+            <if test="minutes != null">
+                #{minutes,jdbcType=INTEGER},
+            </if>
+            <if test="elemeDeviceId != null">
+                #{elemeDeviceId,jdbcType=CHAR},
+            </if>
+            <if test="isNew != null">
+                #{isNew,jdbcType=TINYINT},
+            </if>
+            <if test="x != null">
+                #{x,jdbcType=DECIMAL},
+            </if>
+            <if test="y != null">
+                #{y,jdbcType=DECIMAL},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=CHAR},
+            </if>
+            <if test="networkType != null">
+                #{networkType,jdbcType=VARCHAR},
+            </if>
+            <if test="platform != null">
+                #{platform,jdbcType=VARCHAR},
+            </if>
+            <if test="brand != null">
+                #{brand,jdbcType=VARCHAR},
+            </if>
+            <if test="model != null">
+                #{model,jdbcType=VARCHAR},
+            </if>
+            <if test="networkOperator != null">
+                #{networkOperator,jdbcType=VARCHAR},
+            </if>
+            <if test="resolution != null">
+                #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="channel != null">
+                #{channel,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ele.model.hackathon.NextEcoEnv">
+        update next_eco_env
+        <set>
+            <if test="isSelect != null">
+                is_select = #{isSelect,jdbcType=TINYINT},
+            </if>
+            <if test="dayNo != null">
+                day_no = #{dayNo,jdbcType=INTEGER},
+            </if>
+            <if test="minutes != null">
+                minutes = #{minutes,jdbcType=INTEGER},
+            </if>
+            <if test="elemeDeviceId != null">
+                eleme_device_id = #{elemeDeviceId,jdbcType=CHAR},
+            </if>
+            <if test="isNew != null">
+                is_new = #{isNew,jdbcType=TINYINT},
+            </if>
+            <if test="x != null">
+                x = #{x,jdbcType=DECIMAL},
+            </if>
+            <if test="y != null">
+                y = #{y,jdbcType=DECIMAL},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=CHAR},
+            </if>
+            <if test="networkType != null">
+                network_type = #{networkType,jdbcType=VARCHAR},
+            </if>
+            <if test="platform != null">
+                platform = #{platform,jdbcType=VARCHAR},
+            </if>
+            <if test="brand != null">
+                brand = #{brand,jdbcType=VARCHAR},
+            </if>
+            <if test="model != null">
+                model = #{model,jdbcType=VARCHAR},
+            </if>
+            <if test="networkOperator != null">
+                network_operator = #{networkOperator,jdbcType=VARCHAR},
+            </if>
+            <if test="resolution != null">
+                resolution = #{resolution,jdbcType=VARCHAR},
+            </if>
+            <if test="channel != null">
+                channel = #{channel,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where list_id = #{listId,jdbcType=CHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ele.model.hackathon.NextEcoEnv">
+        update next_eco_env
+        set is_select = #{isSelect,jdbcType=TINYINT},
+        day_no = #{dayNo,jdbcType=INTEGER},
+        minutes = #{minutes,jdbcType=INTEGER},
+        eleme_device_id = #{elemeDeviceId,jdbcType=CHAR},
+        is_new = #{isNew,jdbcType=TINYINT},
+        x = #{x,jdbcType=DECIMAL},
+        y = #{y,jdbcType=DECIMAL},
+        user_id = #{userId,jdbcType=CHAR},
+        network_type = #{networkType,jdbcType=VARCHAR},
+        platform = #{platform,jdbcType=VARCHAR},
+        brand = #{brand,jdbcType=VARCHAR},
+        model = #{model,jdbcType=VARCHAR},
+        network_operator = #{networkOperator,jdbcType=VARCHAR},
+        resolution = #{resolution,jdbcType=VARCHAR},
+        channel = #{channel,jdbcType=VARCHAR}
+        where list_id = #{listId,jdbcType=CHAR}
+    </update>
+    <!-- 批量插入数据-->
+    <!--<insert id="batchInsertVoucher" parameterType="list">-->
+    <!--insert into his_eco_env(<include refid="Base_Column_List"/>) values-->
+    <!--<foreach collection="list" item="item" separator=",">-->
+    <!--(-->
+    <!--<include refid="batchColValues"/>-->
+    <!--)-->
+    <!--</foreach>-->
+    <!--</insert>-->
+</mapper>

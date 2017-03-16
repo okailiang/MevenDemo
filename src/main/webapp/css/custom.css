@@ -1,0 +1,17 @@
+.main{
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+}
+.voucher-table{
+    overflow: auto;
+    width: 100%;
+    text-align: center;
+    margin: 0 auto;
+    border: 1px solid rgba(171, 149, 149, 0.48);
+}
+.voucher-tab{
+    padding-left: 10px;
+    margin: 8px;
+    float: left;
+}

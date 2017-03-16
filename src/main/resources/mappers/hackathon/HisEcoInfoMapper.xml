@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ele.dao.hackathon.HisEcoInfoMapper">
+    <resultMap id="BaseResultMap" type="com.ele.model.hackathon.HisEcoInfo">
+        <id column="log_id" property="logId" jdbcType="CHAR"/>
+        <result column="list_id" property="listId" jdbcType="CHAR"/>
+        <result column="restaurant_id" property="restaurantId" jdbcType="CHAR"/>
+        <result column="sort_index" property="sortIndex" jdbcType="INTEGER"/>
+        <result column="is_click" property="isClick" jdbcType="TINYINT"/>
+        <result column="is_buy" property="isBuy" jdbcType="TINYINT"/>
+        <result column="is_raw_buy" property="isRawBuy" jdbcType="TINYINT"/>
+        <result column="order_id" property="orderId" jdbcType="CHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    log_id, list_id, restaurant_id, sort_index, is_click, is_buy, is_raw_buy, order_id
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from his_eco_info
+        where log_id = #{logId,jdbcType=CHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from his_eco_info
+    where log_id = #{logId,jdbcType=CHAR}
+  </delete>
+    <insert id="insert" parameterType="com.ele.model.hackathon.HisEcoInfo">
+    insert into his_eco_info (log_id, list_id, restaurant_id, 
+      sort_index, is_click, is_buy, 
+      is_raw_buy, order_id)
+    values (#{logId,jdbcType=CHAR}, #{listId,jdbcType=CHAR}, #{restaurantId,jdbcType=CHAR}, 
+      #{sortIndex,jdbcType=INTEGER}, #{isClick,jdbcType=TINYINT}, #{isBuy,jdbcType=TINYINT}, 
+      #{isRawBuy,jdbcType=TINYINT}, #{orderId,jdbcType=CHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.ele.model.hackathon.HisEcoInfo">
+        insert into his_eco_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logId != null">
+                log_id,
+            </if>
+            <if test="listId != null">
+                list_id,
+            </if>
+            <if test="restaurantId != null">
+                restaurant_id,
+            </if>
+            <if test="sortIndex != null">
+                sort_index,
+            </if>
+            <if test="isClick != null">
+                is_click,
+            </if>
+            <if test="isBuy != null">
+                is_buy,
+            </if>
+            <if test="isRawBuy != null">
+                is_raw_buy,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logId != null">
+                #{logId,jdbcType=CHAR},
+            </if>
+            <if test="listId != null">
+                #{listId,jdbcType=CHAR},
+            </if>
+            <if test="restaurantId != null">
+                #{restaurantId,jdbcType=CHAR},
+            </if>
+            <if test="sortIndex != null">
+                #{sortIndex,jdbcType=INTEGER},
+            </if>
+            <if test="isClick != null">
+                #{isClick,jdbcType=TINYINT},
+            </if>
+            <if test="isBuy != null">
+                #{isBuy,jdbcType=TINYINT},
+            </if>
+            <if test="isRawBuy != null">
+                #{isRawBuy,jdbcType=TINYINT},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=CHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ele.model.hackathon.HisEcoInfo">
+        update his_eco_info
+        <set>
+            <if test="listId != null">
+                list_id = #{listId,jdbcType=CHAR},
+            </if>
+            <if test="restaurantId != null">
+                restaurant_id = #{restaurantId,jdbcType=CHAR},
+            </if>
+            <if test="sortIndex != null">
+                sort_index = #{sortIndex,jdbcType=INTEGER},
+            </if>
+            <if test="isClick != null">
+                is_click = #{isClick,jdbcType=TINYINT},
+            </if>
+            <if test="isBuy != null">
+                is_buy = #{isBuy,jdbcType=TINYINT},
+            </if>
+            <if test="isRawBuy != null">
+                is_raw_buy = #{isRawBuy,jdbcType=TINYINT},
+            </if>
+            <if test="orderId != null">
+                order_id = #{orderId,jdbcType=CHAR},
+            </if>
+        </set>
+        where log_id = #{logId,jdbcType=CHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ele.model.hackathon.HisEcoInfo">
+    update his_eco_info
+    set list_id = #{listId,jdbcType=CHAR},
+      restaurant_id = #{restaurantId,jdbcType=CHAR},
+      sort_index = #{sortIndex,jdbcType=INTEGER},
+      is_click = #{isClick,jdbcType=TINYINT},
+      is_buy = #{isBuy,jdbcType=TINYINT},
+      is_raw_buy = #{isRawBuy,jdbcType=TINYINT},
+      order_id = #{orderId,jdbcType=CHAR}
+    where log_id = #{logId,jdbcType=CHAR}
+  </update>
+    <!-- 批量插入数据-->
+    <!--<insert id="batchInsertVoucher" parameterType="list">-->
+    <!--insert into his_eco_info(<include refid="Base_Column_List"/>) values-->
+    <!--<foreach collection="list" item="item" separator=",">-->
+    <!--(-->
+    <!--<include refid="batchColValues"/>-->
+    <!--)-->
+    <!--</foreach>-->
+    <!--</insert>-->
+</mapper>

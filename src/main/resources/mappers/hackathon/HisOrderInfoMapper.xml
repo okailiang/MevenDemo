@@ -1,0 +1,363 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ele.dao.hackathon.HisOrderInfoMapper">
+    <resultMap id="BaseResultMap" type="com.ele.model.hackathon.HisOrderInfo">
+        <id column="order_id" property="orderId" jdbcType="CHAR"/>
+        <result column="restaurant_id" property="restaurantId" jdbcType="CHAR"/>
+        <result column="day_no" property="dayNo" jdbcType="INTEGER"/>
+        <result column="minutes" property="minutes" jdbcType="INTEGER"/>
+        <result column="deliver_fee" property="deliverFee" jdbcType="INTEGER"/>
+        <result column="is_online_paid" property="isOnlinePaid" jdbcType="TINYINT"/>
+        <result column="order_process_minutes" property="orderProcessMinutes" jdbcType="VARCHAR"/>
+        <result column="restaurant_num" property="restaurantNum" jdbcType="INTEGER"/>
+        <result column="address_type" property="addressType" jdbcType="VARCHAR"/>
+        <result column="is_valid" property="isValid" jdbcType="TINYINT"/>
+        <result column="is_book" property="isBook" jdbcType="TINYINT"/>
+        <result column="is_coupon" property="isCoupon" jdbcType="TINYINT"/>
+        <result column="is_invoice" property="isInvoice" jdbcType="TINYINT"/>
+        <result column="pindan_flag" property="pindanFlag" jdbcType="TINYINT"/>
+        <result column="x" property="x" jdbcType="DECIMAL"/>
+        <result column="y" property="y" jdbcType="DECIMAL"/>
+        <result column="bu_flag_name" property="buFlagName" jdbcType="VARCHAR"/>
+        <result column="eleme_order_total" property="elemeOrderTotal" jdbcType="INTEGER"/>
+        <result column="total" property="total" jdbcType="INTEGER"/>
+        <result column="cut_money" property="cutMoney" jdbcType="INTEGER"/>
+        <result column="is_activity" property="isActivity" jdbcType="TINYINT"/>
+        <result column="has_new_user_subsidy" property="hasNewUserSubsidy" jdbcType="TINYINT"/>
+        <result column="hongbao_amount" property="hongbaoAmount" jdbcType="INTEGER"/>
+        <result column="receiver_deliver_fee" property="receiverDeliverFee" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="CHAR"/>
+        <result column="food_name" property="foodName" jdbcType="VARCHAR"/>
+        <result column="food_category" property="foodCategory" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        order_id, restaurant_id, day_no, minutes, deliver_fee, is_online_paid, order_process_minutes,
+        restaurant_num, address_type, is_valid, is_book, is_coupon, is_invoice, pindan_flag,
+        x, y, bu_flag_name, eleme_order_total, total, cut_money, is_activity, has_new_user_subsidy,
+        hongbao_amount, receiver_deliver_fee, user_id, food_name, food_category
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from his_order_info
+        where order_id = #{orderId,jdbcType=CHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+        delete from his_order_info
+        where order_id = #{orderId,jdbcType=CHAR}
+    </delete>
+    <insert id="insert" parameterType="com.ele.model.hackathon.HisOrderInfo">
+    insert into his_order_info (order_id, restaurant_id, day_no, 
+      minutes, deliver_fee, is_online_paid, 
+      order_process_minutes, restaurant_num, address_type, 
+      is_valid, is_book, is_coupon, 
+      is_invoice, pindan_flag, x, 
+      y, bu_flag_name, eleme_order_total, 
+      total, cut_money, is_activity, 
+      has_new_user_subsidy, hongbao_amount, receiver_deliver_fee, 
+      user_id, food_name, food_category
+      )
+    values (#{orderId,jdbcType=CHAR}, #{restaurantId,jdbcType=CHAR}, #{dayNo,jdbcType=INTEGER}, 
+      #{minutes,jdbcType=INTEGER}, #{deliverFee,jdbcType=INTEGER}, #{isOnlinePaid,jdbcType=TINYINT}, 
+      #{orderProcessMinutes,jdbcType=VARCHAR}, #{restaurantNum,jdbcType=INTEGER}, #{addressType,jdbcType=VARCHAR}, 
+      #{isValid,jdbcType=TINYINT}, #{isBook,jdbcType=TINYINT}, #{isCoupon,jdbcType=TINYINT}, 
+      #{isInvoice,jdbcType=TINYINT}, #{pindanFlag,jdbcType=TINYINT}, #{x,jdbcType=DECIMAL}, 
+      #{y,jdbcType=DECIMAL}, #{buFlagName,jdbcType=VARCHAR}, #{elemeOrderTotal,jdbcType=INTEGER}, 
+      #{total,jdbcType=INTEGER}, #{cutMoney,jdbcType=INTEGER}, #{isActivity,jdbcType=TINYINT}, 
+      #{hasNewUserSubsidy,jdbcType=TINYINT}, #{hongbaoAmount,jdbcType=INTEGER}, #{receiverDeliverFee,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=CHAR}, #{foodName,jdbcType=VARCHAR}, #{foodCategory,jdbcType=VARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.ele.model.hackathon.HisOrderInfo">
+        insert into his_order_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                order_id,
+            </if>
+            <if test="restaurantId != null">
+                restaurant_id,
+            </if>
+            <if test="dayNo != null">
+                day_no,
+            </if>
+            <if test="minutes != null">
+                minutes,
+            </if>
+            <if test="deliverFee != null">
+                deliver_fee,
+            </if>
+            <if test="isOnlinePaid != null">
+                is_online_paid,
+            </if>
+            <if test="orderProcessMinutes != null">
+                order_process_minutes,
+            </if>
+            <if test="restaurantNum != null">
+                restaurant_num,
+            </if>
+            <if test="addressType != null">
+                address_type,
+            </if>
+            <if test="isValid != null">
+                is_valid,
+            </if>
+            <if test="isBook != null">
+                is_book,
+            </if>
+            <if test="isCoupon != null">
+                is_coupon,
+            </if>
+            <if test="isInvoice != null">
+                is_invoice,
+            </if>
+            <if test="pindanFlag != null">
+                pindan_flag,
+            </if>
+            <if test="x != null">
+                x,
+            </if>
+            <if test="y != null">
+                y,
+            </if>
+            <if test="buFlagName != null">
+                bu_flag_name,
+            </if>
+            <if test="elemeOrderTotal != null">
+                eleme_order_total,
+            </if>
+            <if test="total != null">
+                total,
+            </if>
+            <if test="cutMoney != null">
+                cut_money,
+            </if>
+            <if test="isActivity != null">
+                is_activity,
+            </if>
+            <if test="hasNewUserSubsidy != null">
+                has_new_user_subsidy,
+            </if>
+            <if test="hongbaoAmount != null">
+                hongbao_amount,
+            </if>
+            <if test="receiverDeliverFee != null">
+                receiver_deliver_fee,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="foodName != null">
+                food_name,
+            </if>
+            <if test="foodCategory != null">
+                food_category,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                #{orderId,jdbcType=CHAR},
+            </if>
+            <if test="restaurantId != null">
+                #{restaurantId,jdbcType=CHAR},
+            </if>
+            <if test="dayNo != null">
+                #{dayNo,jdbcType=INTEGER},
+            </if>
+            <if test="minutes != null">
+                #{minutes,jdbcType=INTEGER},
+            </if>
+            <if test="deliverFee != null">
+                #{deliverFee,jdbcType=INTEGER},
+            </if>
+            <if test="isOnlinePaid != null">
+                #{isOnlinePaid,jdbcType=TINYINT},
+            </if>
+            <if test="orderProcessMinutes != null">
+                #{orderProcessMinutes,jdbcType=VARCHAR},
+            </if>
+            <if test="restaurantNum != null">
+                #{restaurantNum,jdbcType=INTEGER},
+            </if>
+            <if test="addressType != null">
+                #{addressType,jdbcType=VARCHAR},
+            </if>
+            <if test="isValid != null">
+                #{isValid,jdbcType=TINYINT},
+            </if>
+            <if test="isBook != null">
+                #{isBook,jdbcType=TINYINT},
+            </if>
+            <if test="isCoupon != null">
+                #{isCoupon,jdbcType=TINYINT},
+            </if>
+            <if test="isInvoice != null">
+                #{isInvoice,jdbcType=TINYINT},
+            </if>
+            <if test="pindanFlag != null">
+                #{pindanFlag,jdbcType=TINYINT},
+            </if>
+            <if test="x != null">
+                #{x,jdbcType=DECIMAL},
+            </if>
+            <if test="y != null">
+                #{y,jdbcType=DECIMAL},
+            </if>
+            <if test="buFlagName != null">
+                #{buFlagName,jdbcType=VARCHAR},
+            </if>
+            <if test="elemeOrderTotal != null">
+                #{elemeOrderTotal,jdbcType=INTEGER},
+            </if>
+            <if test="total != null">
+                #{total,jdbcType=INTEGER},
+            </if>
+            <if test="cutMoney != null">
+                #{cutMoney,jdbcType=INTEGER},
+            </if>
+            <if test="isActivity != null">
+                #{isActivity,jdbcType=TINYINT},
+            </if>
+            <if test="hasNewUserSubsidy != null">
+                #{hasNewUserSubsidy,jdbcType=TINYINT},
+            </if>
+            <if test="hongbaoAmount != null">
+                #{hongbaoAmount,jdbcType=INTEGER},
+            </if>
+            <if test="receiverDeliverFee != null">
+                #{receiverDeliverFee,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=CHAR},
+            </if>
+            <if test="foodName != null">
+                #{foodName,jdbcType=VARCHAR},
+            </if>
+            <if test="foodCategory != null">
+                #{foodCategory,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ele.model.hackathon.HisOrderInfo">
+        update his_order_info
+        <set>
+            <if test="restaurantId != null">
+                restaurant_id = #{restaurantId,jdbcType=CHAR},
+            </if>
+            <if test="dayNo != null">
+                day_no = #{dayNo,jdbcType=INTEGER},
+            </if>
+            <if test="minutes != null">
+                minutes = #{minutes,jdbcType=INTEGER},
+            </if>
+            <if test="deliverFee != null">
+                deliver_fee = #{deliverFee,jdbcType=INTEGER},
+            </if>
+            <if test="isOnlinePaid != null">
+                is_online_paid = #{isOnlinePaid,jdbcType=TINYINT},
+            </if>
+            <if test="orderProcessMinutes != null">
+                order_process_minutes = #{orderProcessMinutes,jdbcType=VARCHAR},
+            </if>
+            <if test="restaurantNum != null">
+                restaurant_num = #{restaurantNum,jdbcType=INTEGER},
+            </if>
+            <if test="addressType != null">
+                address_type = #{addressType,jdbcType=VARCHAR},
+            </if>
+            <if test="isValid != null">
+                is_valid = #{isValid,jdbcType=TINYINT},
+            </if>
+            <if test="isBook != null">
+                is_book = #{isBook,jdbcType=TINYINT},
+            </if>
+            <if test="isCoupon != null">
+                is_coupon = #{isCoupon,jdbcType=TINYINT},
+            </if>
+            <if test="isInvoice != null">
+                is_invoice = #{isInvoice,jdbcType=TINYINT},
+            </if>
+            <if test="pindanFlag != null">
+                pindan_flag = #{pindanFlag,jdbcType=TINYINT},
+            </if>
+            <if test="x != null">
+                x = #{x,jdbcType=DECIMAL},
+            </if>
+            <if test="y != null">
+                y = #{y,jdbcType=DECIMAL},
+            </if>
+            <if test="buFlagName != null">
+                bu_flag_name = #{buFlagName,jdbcType=VARCHAR},
+            </if>
+            <if test="elemeOrderTotal != null">
+                eleme_order_total = #{elemeOrderTotal,jdbcType=INTEGER},
+            </if>
+            <if test="total != null">
+                total = #{total,jdbcType=INTEGER},
+            </if>
+            <if test="cutMoney != null">
+                cut_money = #{cutMoney,jdbcType=INTEGER},
+            </if>
+            <if test="isActivity != null">
+                is_activity = #{isActivity,jdbcType=TINYINT},
+            </if>
+            <if test="hasNewUserSubsidy != null">
+                has_new_user_subsidy = #{hasNewUserSubsidy,jdbcType=TINYINT},
+            </if>
+            <if test="hongbaoAmount != null">
+                hongbao_amount = #{hongbaoAmount,jdbcType=INTEGER},
+            </if>
+            <if test="receiverDeliverFee != null">
+                receiver_deliver_fee = #{receiverDeliverFee,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=CHAR},
+            </if>
+            <if test="foodName != null">
+                food_name = #{foodName,jdbcType=VARCHAR},
+            </if>
+            <if test="foodCategory != null">
+                food_category = #{foodCategory,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where order_id = #{orderId,jdbcType=CHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ele.model.hackathon.HisOrderInfo">
+        update his_order_info
+        set restaurant_id = #{restaurantId,jdbcType=CHAR},
+        day_no = #{dayNo,jdbcType=INTEGER},
+        minutes = #{minutes,jdbcType=INTEGER},
+        deliver_fee = #{deliverFee,jdbcType=INTEGER},
+        is_online_paid = #{isOnlinePaid,jdbcType=TINYINT},
+        order_process_minutes = #{orderProcessMinutes,jdbcType=VARCHAR},
+        restaurant_num = #{restaurantNum,jdbcType=INTEGER},
+        address_type = #{addressType,jdbcType=VARCHAR},
+        is_valid = #{isValid,jdbcType=TINYINT},
+        is_book = #{isBook,jdbcType=TINYINT},
+        is_coupon = #{isCoupon,jdbcType=TINYINT},
+        is_invoice = #{isInvoice,jdbcType=TINYINT},
+        pindan_flag = #{pindanFlag,jdbcType=TINYINT},
+        x = #{x,jdbcType=DECIMAL},
+        y = #{y,jdbcType=DECIMAL},
+        bu_flag_name = #{buFlagName,jdbcType=VARCHAR},
+        eleme_order_total = #{elemeOrderTotal,jdbcType=INTEGER},
+        total = #{total,jdbcType=INTEGER},
+        cut_money = #{cutMoney,jdbcType=INTEGER},
+        is_activity = #{isActivity,jdbcType=TINYINT},
+        has_new_user_subsidy = #{hasNewUserSubsidy,jdbcType=TINYINT},
+        hongbao_amount = #{hongbaoAmount,jdbcType=INTEGER},
+        receiver_deliver_fee = #{receiverDeliverFee,jdbcType=VARCHAR},
+        user_id = #{userId,jdbcType=CHAR},
+        food_name = #{foodName,jdbcType=VARCHAR},
+        food_category = #{foodCategory,jdbcType=VARCHAR}
+        where order_id = #{orderId,jdbcType=CHAR}
+    </update>
+    <!-- 批量插入数据-->
+    <!--<insert id="batchInsertVoucher" parameterType="list">-->
+    <!--insert into his_eco_env(<include refid="Base_Column_List"/>) values-->
+    <!--<foreach collection="list" item="item" separator=",">-->
+    <!--(-->
+    <!--<include refid="batchColValues"/>-->
+    <!--)-->
+    <!--</foreach>-->
+    <!--</insert>-->
+</mapper>
