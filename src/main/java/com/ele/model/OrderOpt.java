@@ -2,14 +2,10 @@ package com.ele.model;
 
 /**
  * @author oukailiang
- * @create 2017-04-07 上午11:10
+ * @create 2017-04-14 下午3:38
  */
 
-public class Order extends OrderOpt{
-
-    public static final String TYPE = "hahah";
-
-    @Deprecated
+public class OrderOpt{
     private Long id;
 
     private Integer userCount;
@@ -18,7 +14,7 @@ public class Order extends OrderOpt{
 
     private String orderNo;
 
-    public Order() {
+    public OrderOpt() {
     }
 
     public Long getId() {
