@@ -39,7 +39,7 @@ public class FamilyContractDto {
 
     private String publicAccount;
 
-    private Long bankNumbers;
+    private String bankNumbers;
 
     private Integer accountType;
 
@@ -262,11 +262,11 @@ public class FamilyContractDto {
         this.publicAccount = publicAccount;
     }
 
-    public Long getBankNumbers() {
+    public String getBankNumbers() {
         return bankNumbers;
     }
 
-    public void setBankNumbers(Long bankNumbers) {
+    public void setBankNumbers(String bankNumbers) {
         this.bankNumbers = bankNumbers;
     }
 

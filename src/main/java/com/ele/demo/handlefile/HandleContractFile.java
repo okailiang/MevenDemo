@@ -12,10 +12,12 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.json.Json;
 import java.io.*;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 处理合同文件
@@ -25,44 +27,56 @@ import java.util.*;
  */
 
 public class HandleContractFile {
+    public static final String fileDir = System.getProperty("user.home") + "/Desktop/";
+    public static final String IMPORT_FILE = "终极版第二批数据.xlsx";
     //处理后的81
     private static final Map<String, String> noExistAgentMap = new HashMap<>();
+
+    private static final List<FamilyContractDto> perfectContractList = new ArrayList<>();
+    private static final List<FamilyContractDto> existAgentList = new ArrayList<>();
+    private static final List<FamilyContractDto> allContractList = new ArrayList<>();
 
     //代理商和城市对应关系
     private static final Map<String, String> allExistCityAgentMap = new HashMap<>();
     private static final Map<String, Long> allExistAgentMap = new HashMap<>();
+    //银行名->编号
+    private static final Map<String, String> existBankMap = new HashMap<>();
 
     public static void main(String[] args) throws IOException {
 
-        // System.out.println(System.getProperties());
+        //
+        init();
 
-        //String value= "云南七武海\u200B科技有限公司\u200B";
-        //value = value.replaceAll("\u200B","");
-        //System.out.println(value);
-        String fileDir = System.getProperty("user.home") + "/Desktop/";
+//        handelResult(allContractList, perfectContractList, existAgentList);
+        //处理合同银行
+        handleContractFile();
+    }
+
+    private static void init() {
+        //String value= "云南七武海\u200B科技有限公司\u200B";value = value.replaceAll("\u200B","");
 
         //系统中存在的全量数据
-        List<FamilyContractDto> perfectContractList = handlePerfectContractFile(fileDir + "全量_代理商和城市关系.xls");
+        handlePerfectContractFile(fileDir + "全量_代理商和城市关系.xls");
         //合同_系统中存在的代理商.xls
-        List<FamilyContractDto> existAgentList = handleExistAgentFile(fileDir + "全量_代理商.xls");
+        handleExistAgentFile(fileDir + "全量_代理商.xls");
 
         //2.处理修改后代理商数据
-        String modify1AgentFile = fileDir + "合同_导入处理结果_反馈2.xlsx";
-        List<FamilyContractDto> modify1AgentList = handleAgentFile(modify1AgentFile);
-        //输出不在系统中的代理商
-        //List<FamilyContractDto> noExistAgentList = printNoExistAgent(modify1AgentList, existAgentList);
-        //输入到文件中
-        //outModify1AgentFile(modify1AgentFile);
+//        String modify1AgentFile = fileDir + IMPORT_FILE;
+//        List<FamilyContractDto> modify1AgentList = handleAgentFile(modify1AgentFile);
+//        输出不在系统中的代理商
+//        List<FamilyContractDto> noExistAgentList = printNoExistAgent(modify1AgentList, existAgentList);
+//        输入到文件中
+//        outModify1AgentFile(modify1AgentFile);
 
         //1.导入原始全量数据
-        List<FamilyContractDto> allContractList = handleContractFile(fileDir + "合同_导入处理结果_反馈2.xlsx");
+        handleContractFile(fileDir + IMPORT_FILE);
 
         //系统中存在的城市
-        //List<FamilyContractDto> existCityContractList = handleExistCityFile(fileDir + "合同_系统中的城市.xls");
+//        List<FamilyContractDto> existCityContractList = handleExistCityFile(fileDir + "合同_系统中的城市.xls");
 //        printNoExistCityContractList(allContractList, existCityContractList);
+        //处理银行
+        handleExistBankFile(fileDir + "Sauron目前支持的银行_20170613171709.xls");
 
-        //1.allContractList   2.modify1AgentList
-        handelResult(allContractList, perfectContractList, existAgentList);
     }
 
     private static void handelResult(List<FamilyContractDto> allContractList, List<FamilyContractDto> perfectContractList, List<FamilyContractDto> existAgentList) {
@@ -70,12 +84,11 @@ public class HandleContractFile {
         //输出不在系统中的代理商
         List<FamilyContractDto> noExistAgentList = printNoExistAgent(allContractList, existAgentList);
         //输出不符合城市和代理商的合同
-        List<FamilyContractDto> noPerfectAgentContracts = printNoPerfectAgentContract(allContractList, perfectContractList);
-        //输出代理商不在系统中的合同和代理商在而城市不在
-        List<List<FamilyContractDto>> noCityOrAgentContactList = printNoAgentContract(noExistAgentList, noPerfectAgentContracts);
+        List<List<FamilyContractDto>> noCityOrAgentContactList = getNoPerfectAgentContract(allContractList, perfectContractList);
+        printCityAgentContract(noCityOrAgentContactList.get(1), "输出代理商不在系统中的合同");
+        printCityAgentContract(noCityOrAgentContactList.get(0), "输出代理商在，但城市不在系统中的合同");
         //生成处理结果文件
-        String fileDir = System.getProperty("user.home") + "/Desktop/合同_导入处理结果_反馈2.xlsx";
-        //outHandleResultContractFile(fileDir, noCityOrAgentContactList.get(0), noCityOrAgentContactList.get(1));
+        outHandleResultContractFile(fileDir + IMPORT_FILE, noCityOrAgentContactList.get(0), noCityOrAgentContactList.get(1));
     }
 
     private static void printNoExistCityContractList(List<FamilyContractDto> allContractList, List<FamilyContractDto> existCityContractList) {
@@ -83,8 +96,10 @@ public class HandleContractFile {
         Map<String, FamilyContractDto> allCityNameContractMap = getCityNameContractMap(allContractList);
         Map<String, FamilyContractDto> existCityNameContractMap = getCityNameContractMap(existCityContractList);
         StringBuilder sb = new StringBuilder();
+        int count = 0;
         for (Map.Entry<String, FamilyContractDto> entry : allCityNameContractMap.entrySet()) {
             if (existCityNameContractMap.get(entry.getKey()) == null) {
+                count++;
                 sb.append(entry.getKey()).append("\n");
             }
         }
@@ -92,6 +107,7 @@ public class HandleContractFile {
         System.out.println();
         System.out.println("导入合同中城市总个数：" + allCityNameContractMap.size());
         System.out.println("导入合同中存在系统中的城市总个数：" + existCityNameContractMap.size());
+        System.out.println("导入合同中不存在系统中的城市总个数：" + count);
         System.out.println("导入合同中不在系统中的城市名称：\n" + sb.toString());
     }
 
@@ -103,8 +119,7 @@ public class HandleContractFile {
 
         List<FamilyContractDto> noExistAgentList = new ArrayList<>();
         System.out.println();
-        System.out.println("输出不在系统中的代理商==============");
-        System.out.println();
+        System.out.println("输出导入合同中不在系统中的代理商==============");
         Map<String, FamilyContractDto> allAgentNameMap = getAgentNameMap(allContractList);
 
         Map<String, FamilyContractDto> existAgentNameMap = getAgentNameMap(existAgentList);
@@ -118,13 +133,11 @@ public class HandleContractFile {
                 noExistAgentList.add(entry.getValue());
             }
         }
-
-        System.out.println(sb.toString());
-
+        System.out.println("导入合同中代理商总个数 = " + allAgentNameMap.size());
+        System.out.println("系统中存在代理商个数 = " + existAgentNameMap.size());
+        System.out.println("导入合同中系统中不存在代理商个数 = " + count);
         System.out.println();
-        System.out.println("导入代理商总个数=" + allAgentNameMap.size());
-        System.out.println("存在代理商个数=" + existAgentNameMap.size());
-        System.out.println("不存在代理商个数=" + count);
+        System.out.println(sb.toString());
 
         return noExistAgentList;
     }
@@ -132,96 +145,58 @@ public class HandleContractFile {
     /**
      * 输出不符合城市和代理商的合同
      */
-    private static List<FamilyContractDto> printNoPerfectAgentContract(List<FamilyContractDto> allContractList, List<FamilyContractDto> perfectContractList) {
-
-        List<FamilyContractDto> noPerfectAgentContract = new ArrayList<>();
-        System.out.println();
-        System.out.println("输出不符合城市和代理商的合同==============");
-        System.out.println();
-        Map<String, FamilyContractDto> allCityNameContractMap = getCityNameContractMap(allContractList);
-
-        Map<String, FamilyContractDto> perfectCityNameContractMap = getCityNameContractMap(perfectContractList);
-
-        StringBuilder sb = new StringBuilder();
-        int count = 0;
-        for (Map.Entry<String, FamilyContractDto> entry : allCityNameContractMap.entrySet()) {
-            if (perfectCityNameContractMap.get(entry.getKey()) == null) {
-                count++;
-                sb.append("").append(entry.getValue().getAgentCityName()).append("");
-                sb.append("  |  ");
-                sb.append("").append(entry.getValue().getAgentName()).append("");
-                sb.append("\n");
-
-                noPerfectAgentContract.add(entry.getValue());
-            } else {
-                FamilyContractDto perfectContract = perfectCityNameContractMap.get(entry.getKey());
-                FamilyContractDto importContract = entry.getValue();
-                if (!(perfectContract.getAgentName().equals(importContract.getAgentName())
-                        && perfectContract.getAgentCityName().equals(importContract.getAgentCityName()))) {
-                    System.out.println(importContract.getAgentCityName() + " | " + perfectContract.getAgentName() + "|");
-                }
-            }
-        }
-
-        System.out.println(sb.toString());
-
-        System.out.println("导入合同总个数=" + allCityNameContractMap.size());
-        System.out.println("符合个数=" + perfectCityNameContractMap.size());
-        System.out.println("不符合合同个数=" + count);
-
-        return noPerfectAgentContract;
-    }
-
-    /**
-     * 输出代理商不在系统中的合同
-     */
-    private static List<List<FamilyContractDto>> printNoAgentContract(List<FamilyContractDto> noExistAgentList, List<FamilyContractDto> noPerfectAgentContracts) {
+    private static List<List<FamilyContractDto>> getNoPerfectAgentContract(List<FamilyContractDto> allContractList, List<FamilyContractDto> perfectContractList) {
 
         List<FamilyContractDto> noCityContractList = new ArrayList<>();
         List<FamilyContractDto> noAgentContractList = new ArrayList<>();
+
         System.out.println();
-        System.out.println("输出代理商不在系统中的合同==============");
-        System.out.println();
-        Map<String, FamilyContractDto> noExistAgentListMap = getAgentNameMap(noExistAgentList);
+        System.out.println("输出不符合城市和代理商的合同==============");
+        Map<String, List<FamilyContractDto>> allAgentNameContractMap = allContractList.stream().collect(Collectors.groupingBy(FamilyContractDto::getAgentName));
 
-        //Map<String, FamilyContractDto> perfectCityNameContractMap = getCityNameContractMap(noPerfectAgentContracts);
+        Map<String, List<FamilyContractDto>> perfectAgentNameContractMap = perfectContractList.stream().collect(Collectors.groupingBy(FamilyContractDto::getAgentName));
 
-        StringBuilder sb = new StringBuilder();
-        StringBuilder sbCity = new StringBuilder();
-        int count = 0;
-        for (FamilyContractDto noPerfectContract : noPerfectAgentContracts) {
-            if (noExistAgentListMap.get(noPerfectContract.getAgentName()) != null) {
-                noCityContractList.add(noPerfectContract);
+        for (Map.Entry<String, List<FamilyContractDto>> entry : allAgentNameContractMap.entrySet()) {
 
-                sb.append("").append(noPerfectContract.getAgentCityName()).append("");
-                sb.append("  |  ");
-                sb.append("").append(noPerfectContract.getAgentName()).append("");
-                sb.append("\n");
-            } else {
-                noAgentContractList.add(noPerfectContract);
-                count++;
-                sbCity.append("").append(noPerfectContract.getAgentCityName()).append("");
-                sbCity.append("  |  ");
-                sbCity.append("").append(noPerfectContract.getAgentName()).append("");
-                sbCity.append("\n");
+            List<FamilyContractDto> existContractList = perfectAgentNameContractMap.get(entry.getKey());
+            List<FamilyContractDto> importContractList = entry.getValue();
+
+            if (existContractList != null && !existContractList.isEmpty()) {
+
+                Map<String, FamilyContractDto> existContractMap = getCityNameContractMap(existContractList);
+
+                for (FamilyContractDto contractDto : importContractList) {
+                    FamilyContractDto cityNameContractDto = existContractMap.get(contractDto.getAgentCityName());
+                    //存在代理商和城市对应关系
+                    if (cityNameContractDto == null || !cityNameContractDto.getAgentCityName().equals(contractDto.getAgentCityName())) {
+                        noCityContractList.add(contractDto);
+                    }
+                }
+            } else {//代理商不存在
+                noAgentContractList.addAll(importContractList);
             }
         }
 
-        System.out.println(sb.toString());
-        System.out.println();
-        System.out.println();
-        System.out.println("输出代理商在，但城市不在不在系统中的合同==============");
-        System.out.println(sbCity.toString());
-
-        System.out.println();
-        System.out.println("导入不符合城市和代理商合同总个数=" + noPerfectAgentContracts.size());
-        System.out.println("导入不符合代理商合同总个数=" + count);
-        System.out.println("不符合城市的合同个数=" + noCityContractList.size());
-
-
+        System.out.println("导入合同总个数 = " + allContractList.size());
+        System.out.println("导入不符合城市和代理商合同总个数 = " + (noCityContractList.size() + noAgentContractList.size()));
+        System.out.println("导入不符合代理商合同总个数 = " + noAgentContractList.size());
+        System.out.println("不符合城市的合同个数 = " + noCityContractList.size());
+        //
         return Arrays.asList(noCityContractList, noAgentContractList);
     }
 
+    private static void printCityAgentContract(List<FamilyContractDto> cityAgentContractList, String title) {
+        StringBuilder sb = new StringBuilder();
+        for (FamilyContractDto contractDto : cityAgentContractList) {
+            sb.append("").append(contractDto.getAgentCityName()).append("");
+            sb.append("  |  ");
+            sb.append("").append(contractDto.getAgentName()).append("");
+            sb.append("\n");
+        }
+        System.out.println();
+        System.out.println(title + "=========================");
+        System.out.println(sb.toString());
+    }
 
     private static Map<String, FamilyContractDto> getAgentNameMap(List<FamilyContractDto> allContractList) {
         Map<String, FamilyContractDto> agentNameMap = new HashMap<>();
@@ -239,10 +214,18 @@ public class HandleContractFile {
         return agentNameMap;
     }
 
+    private static Map<String, FamilyContractDto> getCityAgentContractMap(List<FamilyContractDto> allContractList) {
+        Map<String, FamilyContractDto> agentNameMap = new HashMap<>();
+        for (FamilyContractDto familyContractDto : allContractList) {
+            agentNameMap.put(familyContractDto.getAgentCityName() + "-" + familyContractDto.getAgentName(), familyContractDto);
+        }
+        return agentNameMap;
+    }
+
     public static List<FamilyContractDto> handleContractFile(String filePath) {
 
         XSSFWorkbook workbook;
-        List<FamilyContractDto> contractInfoList = new ArrayList<>();
+//        List<FamilyContractDto> contractInfoList = new ArrayList<>();
         Map<String, String> cityAgentMap = new HashMap<>();
         Map<String, String> agentCityMap = new HashMap<>();
         Set<String> replaceAgentSet = new HashSet<>();
@@ -276,7 +259,7 @@ public class HandleContractFile {
 
                     cityAgentMap.put(contractInfo.getAgentCityName(), contractInfo.getAgentName());
                     agentCityMap.put(contractInfo.getAgentName(), contractInfo.getAgentCityName());
-                    contractInfoList.add(contractInfo);
+                    allContractList.add(contractInfo);
 
                     //替换修改后的代理商
                     if (noExistAgentMap.containsKey(contractInfo.getAgentName())) {
@@ -287,7 +270,7 @@ public class HandleContractFile {
                 }
             }
             //获取代理商名称
-            System.out.println("读取合同个数 = " + contractInfoList.size());
+            System.out.println("读取合同个数 = " + allContractList.size());
             System.out.println("代理城市个数 = " + cityAgentMap.keySet().size());
             System.out.println("代理商名称个数 = " + agentCityMap.keySet().size());
             System.out.println("替换代理商个数 = " + replaceAgentSet.size());
@@ -300,18 +283,146 @@ public class HandleContractFile {
             //printCityAgentName(cityAgentMap);
             //printCityAgentName(contractInfoList);
 
-            OutputStream out = new FileOutputStream(new File(outModifyAgentFilePath));
-            workbook.write(out);
-            out.close();
+            //  OutputStream out = new FileOutputStream(new File(outModifyAgentFilePath));
+            //workbook.write(out);
+            //out.close();
 //            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("结束处理合同文件。。。。");
-        return contractInfoList;
+        return allContractList;
+    }
+
+    public static void handleContractFile() {
+
+        XSSFWorkbook workbook;
+        String outModifyAgentFilePath = System.getProperty("user.home") + "/Desktop/合同_导入处理结果_" + DateUtil.defaultFormatMSDate(new Date()) + ".xlsx";
+        Set<String> set = new HashSet<>();
+        int count = 0;
+        StringBuilder sb = new StringBuilder();
+        try {
+            InputStream is = new FileInputStream(new File(fileDir + IMPORT_FILE));
+            workbook = new XSSFWorkbook(is);
+            System.out.println();
+            System.out.println("开始处理合同文件。。。。");
+            XSSFSheet xssfSheet = workbook.getSheetAt(0);
+            CellStyle cellStyle = workbook.createCellStyle();
+            cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+            cellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
+            for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+                XSSFRow xssfRow = xssfSheet.getRow(rowNum);
+                if (xssfRow != null) {
+                    XSSFCell bankNameCell = xssfRow.getCell(16);
+//                    XSSFCell cityNameCell = xssfRow.getCell(16);
+
+                    String[] bank = splitBankBranchName(getCellValue(bankNameCell));
+                    String bankName = bank[0];
+                    String branchBank = bank[1];
+
+                    if (bankName != null && !"".equals(bankName.trim())) {
+                        bankNameCell.setCellValue(bankName);
+                    }
+
+                    if (!existBankMap.containsKey(bankName)) {
+                        count++;
+                        set.add(bankName);
+                        bankNameCell.setCellStyle(cellStyle);
+                    }
+
+                    XSSFCell branchBankCell = xssfRow.createCell(20);
+                    branchBankCell.setCellValue(branchBank);
+                    if (branchBank == null || branchBank.trim().equals("")) {
+                        branchBankCell.setCellStyle(cellStyle);
+                        System.out.println("无支行 =" + rowNum);
+                    }
+                }
+            }
+            OutputStream out = new FileOutputStream(new File(outModifyAgentFilePath));
+            workbook.write(out);
+            out.close();
+            System.out.println();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //
+        for (String s : set) {
+            sb.append(s).append("\n");
+        }
+        System.out.println("不支持的银行类数 = " + set.size());
+        System.out.println("银行不支持的合同数 = " + count);
+        System.out.println(sb.toString());
+        System.out.println("结束处理合同文件。。。。");
+    }
+
+    /**
+     * 分割银行和支行
+     *
+     * @param bankBranchName
+     * @return
+     */
+    private static String[] splitBankBranchName(String bankBranchName) {
+        String[] result = new String[2];
+        int index = bankBranchName.indexOf("银行");
+        if (index > -1) {
+            result[0] = bankBranchName.substring(0, index + 2);
+            result[1] = bankBranchName.substring(index + 2, bankBranchName.length());
+            result[1] = result[1].replaceAll("股份有限公司", "");
+        }
+
+        return result;
+    }
+
+    /**
+     * 分割省市
+     *
+     * @param provinceCity
+     * @return
+     */
+    private static String[] splitProvinceCity(String provinceCity) {
+        String[] result = new String[2];
+        int index;
+        if ((index = provinceCity.indexOf("省")) > -1) {
+            result[0] = provinceCity.substring(0, index + 1);
+            result[1] = provinceCity.substring(index + 1, provinceCity.length());
+        }
+        if (provinceCity.indexOf("上海市") > -1) {
+            result = splitProvinceCity(provinceCity, "上海市");
+        }
+        if (provinceCity.indexOf("北京市") > -1) {
+            result = splitProvinceCity(provinceCity, "北京市");
+        }
+        if (provinceCity.indexOf("内蒙古自治区") > -1) {
+            result = splitProvinceCity(provinceCity, "内蒙古自治区");
+        }
+        if (provinceCity.indexOf("新疆") > -1) {
+            result = splitProvinceCity(provinceCity, "新疆");
+        }
+        if (provinceCity.indexOf("广西") > -1) {
+            result = splitProvinceCity(provinceCity, "广西");
+        }
+        if (provinceCity.indexOf("西藏") > -1) {
+            result = splitProvinceCity(provinceCity, "西藏");
+        }
+        if (result[0] == null || result[1] == null || result[0] == "" || result[1] == "") {
+            System.out.println(provinceCity);
+        }
+        return result;
+    }
+
+    private static String[] splitProvinceCity(String provinceCity, String splitKey) {
+        String[] result = new String[2];
+        result[0] = splitKey;
+        result[1] = provinceCity.substring(splitKey.length(), provinceCity.length());
+        return result;
     }
 
     private static String getCellValue(XSSFCell cell) {
+        return getCellStringValue(cell).trim().replaceAll("\u200B", "").replaceAll(" ", "");
+    }
+
+    private static String getCellValue(HSSFCell cell) {
         return getCellStringValue(cell).trim().replaceAll("\u200B", "").replaceAll(" ", "");
     }
 
@@ -357,6 +468,32 @@ public class HandleContractFile {
         return contractInfoList;
     }
 
+    public static void handleExistBankFile(String filePath) {
+
+        HSSFWorkbook workbook;
+        try {
+            workbook = new HSSFWorkbook(new FileInputStream(new File(filePath)));
+            System.out.println();
+            System.out.println("开始银行名称文件。。。。");
+            HSSFSheet xssfSheet = workbook.getSheetAt(0);
+            for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
+                HSSFRow xssfRow = xssfSheet.getRow(rowNum);
+                if (xssfRow != null) {
+                    HSSFCell bankName = xssfRow.getCell(1);
+                    HSSFCell bankNumber = xssfRow.getCell(2);
+                    existBankMap.put(getCellValue(bankName), getCellValue(bankNumber));
+                }
+            }
+            System.out.println("共读取记录个数：" + xssfSheet.getLastRowNum());
+            //获取代理商名称
+            System.out.println("银行个数 = " + existBankMap.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("结束处理代理商文件。。。。");
+
+    }
+
 
     /**
      * 获得满足条件的合同
@@ -367,7 +504,7 @@ public class HandleContractFile {
     public static List<FamilyContractDto> handlePerfectContractFile(String filePath) {
 
         HSSFWorkbook workbook;
-        List<FamilyContractDto> contractInfoList = new ArrayList<>();
+//        List<FamilyContractDto> contractInfoList = new ArrayList<>();
 //        Map<String, String> cityAgentMap = new HashMap<>();
         Map<String, String> agentCityMap = new HashMap<>();
         List<String> repeatCityList = new ArrayList<>();
@@ -381,10 +518,10 @@ public class HandleContractFile {
                 if (xssfRow != null) {
                     FamilyContractDto contractInfo = new FamilyContractDto();
                     contractInfo.setAgentCityId(Long.parseLong(getCellStringValue(xssfRow.getCell(0))));
-                    contractInfo.setAgentCityName(getCellStringValue(xssfRow.getCell(1)).trim());
+                    contractInfo.setAgentCityName(getCellValue(xssfRow.getCell(1)).trim());
 
                     contractInfo.setAgentId(Long.parseLong(getCellStringValue(xssfRow.getCell(2))));
-                    contractInfo.setAgentName(getCellStringValue(xssfRow.getCell(3)).trim());
+                    contractInfo.setAgentName(getCellValue(xssfRow.getCell(3)).trim());
 
 
                     if (allExistCityAgentMap.get(contractInfo.getAgentCityName()) != null) {
@@ -393,7 +530,7 @@ public class HandleContractFile {
                     allExistCityAgentMap.put(contractInfo.getAgentCityName(), contractInfo.getAgentName());
 
                     agentCityMap.put(contractInfo.getAgentName(), contractInfo.getAgentCityName());
-                    contractInfoList.add(contractInfo);
+                    perfectContractList.add(contractInfo);
                 }
             }
         } catch (IOException e) {
@@ -401,7 +538,7 @@ public class HandleContractFile {
         }
 
 
-        System.out.println("一共处理条件代理商和城市关系的个数：" + contractInfoList.size());
+        System.out.println("一共处理条件代理商和城市关系的个数：" + perfectContractList.size());
         System.out.println();
         //获取代理商名称
         System.out.println("代理城市个数 = " + allExistCityAgentMap.keySet().size());
@@ -414,7 +551,7 @@ public class HandleContractFile {
         System.out.println();
         System.out.println("结束处理满足条件代理商和城市关系文件。。。");
 
-        return contractInfoList;
+        return perfectContractList;
     }
 
     /**
@@ -428,7 +565,7 @@ public class HandleContractFile {
         HSSFWorkbook workbook;
         System.out.println();
         System.out.println("开始处理已经存在的代理商。。。");
-        List<FamilyContractDto> contractInfoList = new ArrayList<>();
+//        List<FamilyContractDto> contractInfoList = new ArrayList<>();
         try {
             workbook = new HSSFWorkbook(new FileInputStream(new File(filePath)));
             HSSFSheet xssfSheet = workbook.getSheetAt(0);
@@ -437,19 +574,19 @@ public class HandleContractFile {
                 if (xssfRow != null) {
                     FamilyContractDto contractInfo = new FamilyContractDto();
                     contractInfo.setAgentId(Long.parseLong(getCellStringValue(xssfRow.getCell(0))));
-                    contractInfo.setAgentName(getCellStringValue(xssfRow.getCell(1)).trim());
-                    contractInfo.setId(Long.parseLong(getCellStringValue(xssfRow.getCell(2))));
+                    contractInfo.setAgentName(getCellValue(xssfRow.getCell(1)).trim());
+                    //contractInfo.setId(Long.parseLong(getCellStringValue(xssfRow.getCell(2))));
 
                     allExistAgentMap.put(contractInfo.getAgentName(), contractInfo.getAgentId());
-                    contractInfoList.add(contractInfo);
+                    existAgentList.add(contractInfo);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("一共处理已经存在的代理商个数：" + contractInfoList.size());
+        System.out.println("一共处理已经存在的代理商个数：" + existAgentList.size());
         System.out.println("结束处理已经存在的代理商。。。");
-        return contractInfoList;
+        return existAgentList;
     }
 
     /**
@@ -497,20 +634,21 @@ public class HandleContractFile {
         String outFilePath = System.getProperty("user.home") + "/Desktop/合同_导入处理结果_" + DateUtil.defaultFormatMSDate(new Date()) + ".xlsx";
         int noAgentCount = 0;
         int noCityCount = 0;
+        Set<String> cityAgentNameKeySet = new HashSet<>();
         try {
 
             workbook = new XSSFWorkbook(new FileInputStream(new File(filePath)));
             //标记城市
             CellStyle cityCellStyle = workbook.createCellStyle();
             cityCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-            cityCellStyle.setFillForegroundColor(HSSFColor.LIME.index);
+            cityCellStyle.setFillForegroundColor(HSSFColor.GREEN.index);
             //标记代理商
             CellStyle agentCellStyle = workbook.createCellStyle();
             agentCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
             agentCellStyle.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
             //
-            Map<String, FamilyContractDto> noCityContractMap = getCityNameContractMap(noCityContactList);
-            Map<String, FamilyContractDto> noAgentContractMap = getCityNameContractMap(noAgentContactList);
+            Map<String, FamilyContractDto> noCityContractMap = getCityAgentContractMap(noCityContactList);
+            Map<String, FamilyContractDto> noAgentContractMap = getCityAgentContractMap(noAgentContactList);
 
             System.out.println();
             System.out.println("开始生成处理结果合同文件。。。。");
@@ -519,26 +657,33 @@ public class HandleContractFile {
                 XSSFRow xssfRow = xssfSheet.getRow(rowNum);
                 if (xssfRow != null) {
                     FamilyContractDto contractInfo = new FamilyContractDto();
-                    XSSFCell cityName = xssfRow.getCell(3);
-                    XSSFCell agentName = xssfRow.getCell(4);
 
-                    contractInfo.setAgentCityName(cityName.toString().trim().replaceAll("\u200B", "").replaceAll(" ", ""));
-                    contractInfo.setAgentName(agentName.toString().trim().replaceAll("\u200B", "").replaceAll(" ", ""));
+                    XSSFCell cityNameCell = xssfRow.getCell(4);
+                    String cityName = getCellValue(cityNameCell);
+                    if (cityName == null || "".equals(cityName.trim())) {
+                        cityNameCell = xssfRow.getCell(3);
+                        cityName = getCellValue(cityNameCell);
+                    }
+                    XSSFCell agentNameCell = xssfRow.getCell(5);
+                    contractInfo.setAgentCityName(cityName);
+                    contractInfo.setAgentName(getCellValue(agentNameCell));
 
+                    String cityAgentNameKey = contractInfo.getAgentCityName() + "-" + contractInfo.getAgentName();
+                    cityAgentNameKeySet.add(cityAgentNameKey);
                     //
-                    FamilyContractDto noCityContract = noCityContractMap.get(contractInfo.getAgentCityName());
-                    FamilyContractDto noAgentContract = noAgentContractMap.get(contractInfo.getAgentCityName());
+                    FamilyContractDto noCityContract = noCityContractMap.get(cityAgentNameKey);
+                    FamilyContractDto noAgentContract = noAgentContractMap.get(cityAgentNameKey);
 
                     if (noCityContract != null && noCityContract.getAgentName().equals(contractInfo.getAgentName())) {
                         noCityCount++;
-                        cityName.setCellValue(contractInfo.getAgentCityName());
-                        cityName.setCellStyle(cityCellStyle);
+                        cityNameCell.setCellValue(contractInfo.getAgentCityName());
+                        cityNameCell.setCellStyle(cityCellStyle);
                     }
                     if (noAgentContract != null && noAgentContract.getAgentName().equals(contractInfo.getAgentName())) {
                         noAgentCount++;
-                        agentName.setCellValue(contractInfo.getAgentName());
-                        agentName.setCellStyle(agentCellStyle);
-                        cityName.setCellStyle(agentCellStyle);
+                        agentNameCell.setCellValue(contractInfo.getAgentName());
+                        agentNameCell.setCellStyle(agentCellStyle);
+                        cityNameCell.setCellStyle(agentCellStyle);
                     }
                 }
             }
@@ -552,6 +697,8 @@ public class HandleContractFile {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        System.out.println("导入合同中城市和代理商key个数 = " + cityAgentNameKeySet.size());
         System.out.println("系统中没有代理商的合同文件个数 = " + noAgentCount);
         System.out.println("系统中有代理商但城市不对的合同文件个数 = " + noCityCount);
         System.out.println("结束生成处理结果合同文件。。。。");

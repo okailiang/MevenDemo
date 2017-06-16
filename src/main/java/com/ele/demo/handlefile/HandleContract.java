@@ -37,7 +37,7 @@ public class HandleContract {
     public static void main(String[] args) throws IOException {
         // System.out.println(System.getProperties());
 //        handleContractFile(System.getProperty("user.home") + "/Desktop/合同导入模版.xlsx");
-        String filePath = System.getProperty("user.home") + "/Desktop/合同导入模版.xlsx";
+        String filePath = System.getProperty("user.home") + "/Desktop/合同_导入处理结果_反馈2.xlsx";
         File file = new File(filePath);
         InputStream is = new FileInputStream(file);
         handleContractFile(is);
@@ -107,12 +107,7 @@ public class HandleContract {
         }
         contractDto.setAccountType(1);
         //账号超过19位不能存储
-        String bankNum = getCellStringValue(xssfRow.getCell(13)).trim();
-        if (bankNum.length() > 19 || (bankNum.length() == 19 && bankNum.charAt(0) == '9' && (bankNum.charAt(1) > '2'))) {
-            //System.out.println(bankNum);
-        } else {
-            contractDto.setBankNumbers(Long.parseLong(getCellStringValue(xssfRow.getCell(13)).trim()));
-        }
+        contractDto.setBankNumbers(getCellStringValue(xssfRow.getCell(13)).trim());
 
         String provinceCity = getCellStringValue(xssfRow.getCell(14)).trim();
         //分割城市
@@ -225,7 +220,7 @@ public class HandleContract {
             result[1] = result[1].replaceAll("股份有限公司", "");
         }
         //打印非大型银行
-        //printNoBigBank(result);
+        printNoBigBank(result);
 
         return result;
     }

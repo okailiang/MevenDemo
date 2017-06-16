@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,11 +44,28 @@ public class TestList {
 
     }
 
+    private static void testListContain(){
+        List<Long> list = new ArrayList<>();
+        list.add(13456789l);
+        list.add(12l);
+        list.add(1000l);
+        System.out.println(list.contains(13456789l));
+        System.out.println(list.contains(12l));
+        System.out.println(list.contains(new Long(1000)));
+    }
+
     public static void main(String[] args) {
         //testSubListSplit();
-        testSubList();
+        //testSubList();
+        testListContain();
 
         String result = String.format("导入合同数据[%d]条", 9);
+
+        Date date = new Date();
+        System.out.println(date.toString());
+        date = new Date(date.getTime() - 24*60*60*1000);
+        System.out.println(date.toString());
+
         System.out.println(result);
     }
 }
