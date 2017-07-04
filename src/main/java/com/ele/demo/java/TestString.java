@@ -17,11 +17,14 @@ public class TestString {
         System.out.println(index);
         System.out.println(str.substring(index));
         String[] strArray = str.split("-");
+
+        StringBuilder sb = new StringBuilder("1");
+        System.out.println(sb.substring(0,0));
     }
 
     public static void main(String[] args) {
         //
-        //testStrIndexOf();
+        testStrIndexOf();
 
         String str = "尊敬的代理商，您对#cityName#的入驻流程已经通过审核，系统为您新建了城市经理账号：#accountName#， 初始密码：#pswd#，您可以通过此账号对#cityName#进行管理，您也可以在管理员账号下进行统一管理。具体事宜，请咨询当地渠道经理。饿了么期待与您合作愉快。";
         System.out.println(str.length());

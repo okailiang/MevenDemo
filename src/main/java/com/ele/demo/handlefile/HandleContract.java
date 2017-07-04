@@ -2,6 +2,7 @@ package com.ele.demo.handlefile;
 
 import com.ele.model.FamilyContractDto;
 import com.ele.util.DateUtil;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -33,13 +34,14 @@ import java.util.*;
  */
 
 public class HandleContract {
+    public static final String fileDir = System.getProperty("user.home") + "/Desktop/";
+    public static final String IMPORT_FILE = "合同导入_处理结果_汇总_最终最终版.xlsx";
+
 
     public static void main(String[] args) throws IOException {
         // System.out.println(System.getProperties());
 //        handleContractFile(System.getProperty("user.home") + "/Desktop/合同导入模版.xlsx");
-        String filePath = System.getProperty("user.home") + "/Desktop/合同_导入处理结果_反馈2.xlsx";
-        File file = new File(filePath);
-        InputStream is = new FileInputStream(file);
+        InputStream is = new FileInputStream(new File(fileDir + IMPORT_FILE));
         handleContractFile(is);
     }
 
@@ -53,13 +55,7 @@ public class HandleContract {
         try {
             workbook = new XSSFWorkbook(is);
             System.out.println("处理数据开始。。。。");
-            // Read the Sheet
-            //for (int numSheet = 0; numSheet < workbook.getNumberOfSheets(); numSheet++) {
             XSSFSheet xssfSheet = workbook.getSheetAt(0);
-            if (xssfSheet == null) {
-                //continue;
-            }
-
             // Read the Row
             for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
                 index++;
@@ -72,9 +68,6 @@ public class HandleContract {
                     contractInfoList.add(contractDto);
                 }
             }
-            //没有城市和支行的数据
-
-//            }
             System.out.println("处理数据结束。。。。");
         } catch (Exception e) {
             System.out.println("错误行数 =" + index);
@@ -82,55 +75,49 @@ public class HandleContract {
         }
     }
 
-    private static void setContractDto(FamilyContractDto contractDto, XSSFRow xssfRow) throws Exception {
+    private static void setContractDto(FamilyContractDto contract, XSSFRow xssfRow) throws Exception {
 
         if (!"合作合同".equals(getCellStringValue(xssfRow.getCell(0)))) {
-            System.out.println("合同类型不是合作合同，code = " + getCellStringValue(xssfRow.getCell(1)));
+            System.out.println("合同类型不是合作合同，合同编号： " + getCellStringValue(xssfRow.getCell(1)));
         }
-        contractDto.setContractType(1);
-        contractDto.setContractCode(getCellStringValue(xssfRow.getCell(1)).trim());
-        contractDto.setAgentCityName(getCellStringValue(xssfRow.getCell(3)).trim());
-        contractDto.setAgentName(getCellStringValue(xssfRow.getCell(4)).trim());
+        contract.setContractType(1);
+        contract.setContractCode(getCellStringValue(xssfRow.getCell(1)).trim());
 
-        contractDto.setBeginTime(DateUtil.strToDateTime(getCellStringValue(xssfRow.getCell(5))));
-        contractDto.setEndTime(DateUtil.strToDateTime(getCellStringValue(xssfRow.getCell(6))));
-        contractDto.setSignTime(DateUtil.strToDateTime(getCellStringValue(xssfRow.getCell(7))));
+        String cityName = getCellValue(xssfRow.getCell(4));
+        if (cityName == null || "".equals(cityName)) {
+            cityName = getCellValue(xssfRow.getCell(3));
+        }
+        contract.setAgentCityName(cityName);
+        contract.setAgentName(getCellValue(xssfRow.getCell(5)));
 
-        contractDto.setShareRatio(formatDouble(Double.parseDouble(xssfRow.getCell(8).toString())));
-        contractDto.setAccountLimit(Double.parseDouble(getCellStringValue(xssfRow.getCell(9))));
-        contractDto.setReturnRation(formatDouble(Double.parseDouble(getCellStringValue(xssfRow.getCell(10)))));
+        contract.setBeginTime(DateUtil.strToDateTime(getCellStringValue(xssfRow.getCell(6))));
+        contract.setEndTime(DateUtil.strToDateTime(getCellStringValue(xssfRow.getCell(7))));
+        contract.setSignTime(DateUtil.strToDateTime(getCellStringValue(xssfRow.getCell(8))));
 
-        contractDto.setPublicAccount(getCellStringValue(xssfRow.getCell(11)).trim());
+        contract.setShareRatio(formatDouble(xssfRow.getCell(9).toString()));
+        contract.setAccountLimit(Double.parseDouble(getCellStringValue(xssfRow.getCell(10))));
+        contract.setReturnRation(formatDouble(getCellStringValue(xssfRow.getCell(11))));
+
+        contract.setPublicAccount(getCellStringValue(xssfRow.getCell(12)).trim());
         //1:公司账户
-        if (!"公司账户".equals(getCellStringValue(xssfRow.getCell(12)))) {
-            System.out.println("公司账户类型不同， code = " + getCellStringValue(xssfRow.getCell(1)));
+        if (!"公司账户".equals(getCellStringValue(xssfRow.getCell(13)))) {
+            System.out.println("公司账户类型不同， 合同编号： " + getCellStringValue(xssfRow.getCell(1)));
         }
-        contractDto.setAccountType(1);
-        //账号超过19位不能存储
-        contractDto.setBankNumbers(getCellStringValue(xssfRow.getCell(13)).trim());
+        contract.setAccountType(1);
+        contract.setBankNumbers(getCellValue(xssfRow.getCell(14)));
+        contract.setBranchBankProvince(getCellValue(xssfRow.getCell(15)));
+        contract.setBranchBankCity(getCellValue(xssfRow.getCell(16)));
+        contract.setBankName(getCellValue(xssfRow.getCell(17)));
+        contract.setBranchBankName(getCellValue(xssfRow.getCell(18)));
 
-        String provinceCity = getCellStringValue(xssfRow.getCell(14)).trim();
-        //分割城市
-        String[] provinceCityArr = splitProvinceCity(provinceCity);
-        //打印城市
-//        printProvinceCity(provinceCity);
+        contract.setDeposit(new BigDecimal(getCellStringValue(xssfRow.getCell(19)).trim()));
+        contract.setTransferFee(new BigDecimal(getCellStringValue(xssfRow.getCell(20)).trim()));
 
-        contractDto.setBranchBankProvince(provinceCityArr[0]);
-        contractDto.setBranchBankCity(provinceCityArr[1]);
-
-        String bankBranchName = getCellStringValue(xssfRow.getCell(15)).trim();
-        String[] bankBranchNameArr = splitBankBranchName(bankBranchName);
-        //打印银行
-        //printBankBranchName(bankBranchName);
-        contractDto.setBankName(bankBranchNameArr[0]);
-        contractDto.setBranchBankName(bankBranchNameArr[1]);
-
-        contractDto.setDeposit(new BigDecimal(getCellStringValue(xssfRow.getCell(16)).trim()));
-        contractDto.setTransferFee(new BigDecimal(getCellStringValue(xssfRow.getCell(17)).trim()));
     }
 
-    private static Double formatDouble(Double value) {
-        BigDecimal bigDecimal = BigDecimal.valueOf(value);
+
+    private static Double formatDouble(String value) {
+        BigDecimal bigDecimal = BigDecimal.valueOf(Double.valueOf(value));
         return bigDecimal.multiply(BigDecimal.valueOf(100)).doubleValue();
     }
 
@@ -159,6 +146,14 @@ public class HandleContract {
         if (sb.length() > 0) {
             System.out.println(sb.toString());
         }
+    }
+
+    private static String getCellValue(XSSFCell cell) {
+        return getCellStringValue(cell).trim().replaceAll("\u200B", "").replaceAll(" ", "");
+    }
+
+    private static String getCellValue(HSSFCell cell) {
+        return getCellStringValue(cell).trim().replaceAll("\u200B", "").replaceAll(" ", "");
     }
 
     /**

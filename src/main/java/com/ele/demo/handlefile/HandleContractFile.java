@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public class HandleContractFile {
     public static final String fileDir = System.getProperty("user.home") + "/Desktop/";
-    public static final String IMPORT_FILE = "终极版第二批数据.xlsx";
+    public static final String IMPORT_FILE = "合同导入_处理结果_汇总_最终最终版.xlsx";
     //处理后的81
     private static final Map<String, String> noExistAgentMap = new HashMap<>();
 
@@ -47,9 +47,9 @@ public class HandleContractFile {
         //
         init();
 
-//        handelResult(allContractList, perfectContractList, existAgentList);
+        handelResult(allContractList, perfectContractList, existAgentList);
         //处理合同银行
-        handleContractFile();
+//        handleContractFile();
     }
 
     private static void init() {

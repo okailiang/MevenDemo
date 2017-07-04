@@ -1,5 +1,6 @@
 package com.ele.demo.java;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
@@ -46,10 +47,11 @@ public class TestList {
 
     private static void testListContain(){
         List<Long> list = new ArrayList<>();
-        list.add(13456789l);
+        list.add(new Long(13456789l));
         list.add(12l);
         list.add(1000l);
-        System.out.println(list.contains(13456789l));
+        long a = 13456789l;
+        System.out.println(list.contains(a));
         System.out.println(list.contains(12l));
         System.out.println(list.contains(new Long(1000)));
     }
@@ -67,5 +69,8 @@ public class TestList {
         System.out.println(date.toString());
 
         System.out.println(result);
+
+        Integer id  = 10;
+        System.out.println(JSON.toJSONString(id));
     }
 }

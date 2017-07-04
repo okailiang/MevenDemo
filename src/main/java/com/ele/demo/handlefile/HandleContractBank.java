@@ -313,7 +313,7 @@ public class HandleContractBank {
                         count++;
                         cityCell.setCellStyle(cellStyle);
                     } else {
-                        cityCell.setCellValue(city + "市");
+                        cityCell.setCellValue(city);
                     }
                 }
             }
@@ -419,6 +419,11 @@ public class HandleContractBank {
             result = splitProvinceCity(provinceCity, "宁夏回族自治区");
             //result[0] = "宁夏回族自治区";
         }
+
+        if(result[1] != null && !result[1].equals("") && !result[1].endsWith("市")){
+            result[1] = result[1] + "市";
+        }
+
         if (result[0] == null || result[1] == null || result[0].equals("") || result[1].equals("")) {
             System.out.println(provinceCity);
         }
