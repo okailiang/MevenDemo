@@ -5,11 +5,10 @@ package com.ele.model;
  * @create 2017-04-07 上午11:10
  */
 
-public class Order extends OrderOpt{
+public class Order extends OrderOpt {
 
     public static final String TYPE = "hahah";
 
-    @Deprecated
     private Long id;
 
     private Integer userCount;
@@ -51,5 +50,15 @@ public class Order extends OrderOpt{
 
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", userCount=" + userCount +
+                ", shopCount=" + shopCount +
+                ", orderNo='" + orderNo + '\'' +
+                '}';
     }
 }

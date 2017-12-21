@@ -49,7 +49,7 @@ public class HandleContractFile {
 
         handelResult(allContractList, perfectContractList, existAgentList);
         //处理合同银行
-//        handleContractFile();
+        handleContractFile();
     }
 
     private static void init() {
@@ -313,29 +313,30 @@ public class HandleContractFile {
             for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
                 XSSFRow xssfRow = xssfSheet.getRow(rowNum);
                 if (xssfRow != null) {
-                    XSSFCell bankNameCell = xssfRow.getCell(16);
+                    XSSFCell bankNameCell = xssfRow.getCell(17);
 //                    XSSFCell cityNameCell = xssfRow.getCell(16);
 
-                    String[] bank = splitBankBranchName(getCellValue(bankNameCell));
-                    String bankName = bank[0];
-                    String branchBank = bank[1];
+//                    String[] bank = splitBankBranchName(getCellValue(bankNameCell));
+//                    String bankName = bank[0];
+//                    String branchBank = bank[1];
+//
+//                    if (bankName != null && !"".equals(bankName.trim())) {
+//                        bankNameCell.setCellValue(bankName);
+//                    }
 
-                    if (bankName != null && !"".equals(bankName.trim())) {
-                        bankNameCell.setCellValue(bankName);
-                    }
-
+                    String bankName = getCellValue(bankNameCell);
                     if (!existBankMap.containsKey(bankName)) {
                         count++;
                         set.add(bankName);
                         bankNameCell.setCellStyle(cellStyle);
                     }
 
-                    XSSFCell branchBankCell = xssfRow.createCell(20);
-                    branchBankCell.setCellValue(branchBank);
-                    if (branchBank == null || branchBank.trim().equals("")) {
-                        branchBankCell.setCellStyle(cellStyle);
-                        System.out.println("无支行 =" + rowNum);
-                    }
+//                    XSSFCell branchBankCell = xssfRow.createCell(20);
+//                    branchBankCell.setCellValue(branchBank);
+//                    if (branchBank == null || branchBank.trim().equals("")) {
+//                        branchBankCell.setCellStyle(cellStyle);
+//                        System.out.println("无支行 =" + rowNum);
+//                    }
                 }
             }
             OutputStream out = new FileOutputStream(new File(outModifyAgentFilePath));

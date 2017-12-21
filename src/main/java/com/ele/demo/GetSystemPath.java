@@ -21,6 +21,7 @@ public class GetSystemPath {
             System.out.println(System.getProperty("user.home"));
             System.out.println(System.getProperty("user.name"));
             System.out.println(System.getProperty("java.io.tmpdir"));
+            System.out.println(System.getProperties().toString());
         } catch (Exception e) {
 
         }

@@ -47,19 +47,23 @@ public class TestList {
 
     private static void testListContain(){
         List<Long> list = new ArrayList<>();
+        List<Long> list1 = new ArrayList<>();
+        list1.add(55l);
+//        Long o = list.get(0);
         list.add(new Long(13456789l));
-        list.add(12l);
+        list.add(1l);
         list.add(1000l);
+        list.addAll(0, list1);
         long a = 13456789l;
+//        System.out.println(o);
         System.out.println(list.contains(a));
         System.out.println(list.contains(12l));
-        System.out.println(list.contains(new Long(1000)));
+        Long p = new Long(1);
+        System.out.println(list.contains(p));
+        System.out.println(list.remove(p));
     }
 
-    public static void main(String[] args) {
-        //testSubListSplit();
-        //testSubList();
-        testListContain();
+    private static void tes(){
 
         String result = String.format("导入合同数据[%d]条", 9);
 
@@ -72,5 +76,19 @@ public class TestList {
 
         Integer id  = 10;
         System.out.println(JSON.toJSONString(id));
+    }
+
+    public static void main(String[] args) {
+        //testSubListSplit();
+//        testSubList();
+//        testListContain();
+
+        int i = 1;
+        int j = -i;
+        System.out.println(i+j);
+        String ids = "[12,45]";
+        ids  = ids.replaceAll("\\[","").replaceAll("\\]","");
+        String[] strArr = ids.split(",");
+        System.out.println(ids);
     }
 }
